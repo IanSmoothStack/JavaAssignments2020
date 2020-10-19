@@ -95,5 +95,30 @@ public class LibrarianService {
 				
 			}
 	}
+		
+		
+		
+		public void deleteBranch(Branch branch) {
+			try(Connection conn = conUtil.getConnection()) {
+				BranchDAO adao = new BranchDAO(conn);
+					 adao.deleteBranch(branch);
+					 conn.commit();
+			} catch (ClassNotFoundException | SQLException e) {
+				e.printStackTrace();
+				
+			}
+		}
+		public void addBranch(Branch branch) {
+			try(Connection conn = conUtil.getConnection()) {
+				BranchDAO adao = new BranchDAO(conn);
+					// adao.addBranch(branch);
+					 branch.setBranchId(adao.addBranchWithPk(branch));
+					 conn.commit();
+			} catch (ClassNotFoundException | SQLException e) {
+				e.printStackTrace();
+				
+			}
+		}
+		
 
 }

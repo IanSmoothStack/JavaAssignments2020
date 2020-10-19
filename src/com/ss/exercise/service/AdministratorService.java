@@ -70,38 +70,7 @@ public class AdministratorService {
 	}
 	
 	
-	public String addBook2(Book book) throws SQLException {
-		Connection conn = null;
-		try {
-			conn = conUtil.getConnection();
-			BookDAO bdao = new BookDAO(conn);
-			AuthorDAO adao = new AuthorDAO(conn);
-			if (book.getTitle() != null && book.getTitle().length() > 45) {
-				return "Book Title cannot be empty and should be 45 char in length";
-			}
-			book.setBookId(bdao.addBookWithPk(book));
-			
-//			for (Author a : book.getAuthors()) {
-//				adao.addBookAuthors(book.getBookId(), a.getAuthorId());
-//			}
-			// Do the same for genres/branches etc.
-			// for(Author a: book.getAuthors()) {
-			// adao.addBookAuthors(book.getBookId(), a.getAuthorId());
-			// }
-			conn.commit();
-			return "Book added sucessfully";
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-			if (conn != null) {
-				conn.rollback();
-			}
-			return "Unable to add book - contact admin.";
-		} finally {
-			if (conn != null) {
-				conn.close();
-			}
-		}
-	}
+
 	
 	
 	
@@ -135,6 +104,19 @@ public class AdministratorService {
 		}
 	}
 	
+	
+	public List<Publisher> getBookPublishers() {
+		try(Connection conn = conUtil.getConnection()) {
+			PublisherDAO pdao = new PublisherDAO(conn);
+				return pdao.readAllBookPublishers();
+			
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
 	public List<Author> getAuthors(String searchString) {
 		try(Connection conn = conUtil.getConnection()) {
 			AuthorDAO adao = new AuthorDAO(conn);
@@ -164,6 +146,53 @@ public class AdministratorService {
 		try(Connection conn = conUtil.getConnection()) {
 			BookDAO bdao = new BookDAO(conn);
 				 bdao.updateBook(bBook);
+				 
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			
+		}
+	}
+	
+	
+	public void deleteBook(Book book) {
+		try(Connection conn = conUtil.getConnection()) {
+			BookDAO adao = new BookDAO(conn);
+				 adao.deleteBook(book);
+				 conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			
+		}
+	}
+	
+	
+	public void deleteAuthor(Author author) {
+		try(Connection conn = conUtil.getConnection()) {
+			AuthorDAO adao = new AuthorDAO(conn);
+				 adao.deleteAuthor(author);
+				 conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			
+		}
+	}
+	public void addAuthor(Author author) {
+		try(Connection conn = conUtil.getConnection()) {
+			AuthorDAO adao = new AuthorDAO(conn);
+				// adao.addAuthor(author);
+				 author.setAuthorId(adao.addAuthorWithPk(author));
+				 conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			
+		}
+	}
+	
+	public void updateAuthor(Author author) {
+		try(Connection conn = conUtil.getConnection()) {
+			AuthorDAO adao = new AuthorDAO(conn);
+				 adao.updateAuthor(author);
+				 conn.commit();
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -172,5 +201,73 @@ public class AdministratorService {
 	
 	
 	
+	
+	public void deleteGenre(Genre genre) {
+		try(Connection conn = conUtil.getConnection()) {
+			GenreDAO adao = new GenreDAO(conn);
+				 adao.deleteGenre(genre);
+				 conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			
+		}
+	}
+	public void addGenre(Genre genre) {
+		try(Connection conn = conUtil.getConnection()) {
+			GenreDAO adao = new GenreDAO(conn);
+				// adao.addGenre(genre);
+				 genre.setGenreId(adao.addGenreWithPk(genre));
+				 conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			
+		}
+	}
+	
+	public void updateGenre(Genre genre) {
+		try(Connection conn = conUtil.getConnection()) {
+			GenreDAO adao = new GenreDAO(conn);
+				 adao.updateGenre(genre);
+				 conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			
+		}
+	}
+	
+	
+	
+	public void deletePublisher(Publisher publisher) {
+		try(Connection conn = conUtil.getConnection()) {
+			PublisherDAO adao = new PublisherDAO(conn);
+				 adao.deletePublisher(publisher);
+				 conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			
+		}
+	}
+	public void addPublisher(Publisher publisher) {
+		try(Connection conn = conUtil.getConnection()) {
+			PublisherDAO adao = new PublisherDAO(conn);
+				// adao.addPublisher(publisher);
+				 publisher.setPublisherId(adao.addPublisherWithPk(publisher));
+				 conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			
+		}
+	}
+	
+	public void updatePublisher(Publisher publisher) {
+		try(Connection conn = conUtil.getConnection()) {
+			PublisherDAO adao = new PublisherDAO(conn);
+				 adao.updatePublisher(publisher);
+				 conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			
+		}
+	}
 
 }

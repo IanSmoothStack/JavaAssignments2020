@@ -52,17 +52,21 @@ public class AdminUi {
 			adminBooks();
 			break;
 		case 2:
-			System.out.println("Not rdy yet");
+			System.out.println("");
+			editAuthors();
 			break;
 		case 3:
-			System.out.println("Not rdy yet");
+			System.out.println("");
+			editGenres();
 			break;
 		case 4:
-			System.out.println("Publishers");
-			showPublishers();
+			System.out.println("");
+			editPublisher();
+			//showPublishers();
 			break;
 		case 5:
-			System.out.println("Not rdy yet");
+			System.out.println("");
+			editBranches();
 			break;
 		case 6:
 			System.out.println("Not rdy yet");
@@ -101,6 +105,7 @@ public class AdminUi {
 			break;
 		case 3:
 			System.out.println("");
+			deleteBook();
 			break;
 		case 4:
 			System.out.println("");
@@ -154,6 +159,7 @@ public class AdminUi {
 		System.out.println("2)Update");
 		System.out.println("3)Delete");
 		System.out.println("4)Read");
+		System.out.println("5)Quit to admin menu");
 	}
 	
 	public void showBooks() {
@@ -162,13 +168,17 @@ public class AdminUi {
 		for (Book b : books) {
 			System.out.println("Book Title: " + b.getTitle());
 		}
+		System.out.println("Enter in any char to return to adminMenu");
+		String s = scannerS();
+		adminBooks();
+		
 	}
 	
 	public void showPublishers() {
 		AdministratorService adminService = new AdministratorService();
 		List<Publisher> publishers = adminService.getPublishers(null);
 		for (Publisher p : publishers) {
-			System.out.println("PublisherName: " + p.getPublisherName());
+			System.out.println("Publisher: " + p.getPublisherName());
 		}
 	}
 	
@@ -220,6 +230,7 @@ public class AdminUi {
 	
  public void updateBook(){
 	 AdministratorService adminService = new AdministratorService();
+	
 //		List<Book> bList = adminService.getBooks(null);
 //		int i =0;
 //		for(Book aBook :bList) {
@@ -242,7 +253,8 @@ public class AdminUi {
 		System.out.println("1) Title");
 		System.out.println("2) Author");
 		System.out.println("3) Genre");
-		System.out.println("4) Quit");
+		System.out.println("4) Publisher");
+		System.out.println("5) Quit");
 		int userIn = scanner();
 		switch (userIn) {
 		case 1:
@@ -252,12 +264,21 @@ public class AdminUi {
 			break;
 		case 2:
 			System.out.println("");
+			updateBookAuthors(selectedBook);
 			adminMenu();
 			break;
 		case 3:
+			System.out.println("");
+			updateBookGenres(selectedBook);
 			adminMenu();
 			break;
 		case 4:
+			System.out.println("");
+			updateBookPublisher(selectedBook);
+			adminMenu();
+			break;
+		case 5:
+			System.out.println("");
 			adminMenu();
 			break;
 	
@@ -275,8 +296,350 @@ public class AdminUi {
 	 aBook.setTitle(userIn);
 	 adminService.updateBookName(aBook);
 	 
+	 adminMenu();
+ }
+ 
+ 
+ 
+ public void updateBookAuthors(Book selectedBook) {
+	 AdministratorService adminService = new AdministratorService();
+	 List<Author> authors = authorSelector();
+	 selectedBook.setAuthors(authors);
+	 adminService.updateBookName(selectedBook);
+	 adminMenu();
+ }
+ 
+ public void updateBookGenres(Book selectedBook) {
+	 AdministratorService adminService = new AdministratorService();
+	 List<Genre> genres = genreSelector();
+	 selectedBook.setGenres(genres);
+	 adminService.updateBookName(selectedBook);
+	 adminMenu();
+ }
+ 
+ public void updateBookPublisher(Book selectedBook) {
+	 AdministratorService adminService = new AdministratorService();
+	 Publisher publisher = publisherSelector();
+	 selectedBook.setPublisher(publisher);
+	 adminService.updateBookName(selectedBook);
+	 adminMenu();
+ }
+ 
+ public void deleteBook(){
+	 Book selectedBook = pickABook();
+	 AdministratorService adminService = new AdministratorService();
+	 adminService.deleteBook(selectedBook);
+	 adminMenu();
+ }
+ 
+ public void editAuthors() {
+	 actionList("Authors");
+	 int userIn = scanner();
+	 switch(userIn) {
+	 case 1:
+		 System.out.println("");
+		 authorAdd();
+		 break;
+	 case 2:
+		 System.out.println("");
+		 authorUpdate();
+		 break;
+	 case 3:
+		 System.out.println("");
+		 authorDelete();
+		 break;
+	 case 4:
+		 System.out.println("");
+		 authorRead();
+		 break;
+	 case 5:
+		 System.out.println("");
+		 adminMenu();
+		 break;
+	 }
+ }
+ 
+ 
+ public void authorAdd() {
+	 AdministratorService adminService = new AdministratorService();
+	 System.out.println("Enter in the name of this new author.");
+	 String newName= scannerS();
+	 Author author = new Author(null,newName);
+	 adminService.addAuthor(author);
+	 adminMenu();
+ }
+ 
+ 
+ public void authorUpdate() {
+	 AdministratorService adminService = new AdministratorService();
+	 Author author = authorSelector2();
+	 System.out.println("Enter in new author name for the author formly known as "+author.getAuthorName());
+	 String newName= scannerS();
+	 author.setAuthorName(newName);
+	 adminService.updateAuthor(author);
+	 adminMenu();
+ }
+ 
+ 
+ public void authorDelete() {
+	 AdministratorService adminService = new AdministratorService();
+	 Author author = authorSelector2();
+	 adminService.deleteAuthor(author);
+	 adminMenu();
+ }
+ 
+ 
+ public void authorRead() {
+		AdministratorService adminService = new AdministratorService();
+		List<Author>bList = new ArrayList<>();
+		List<Author> aList = adminService.getAuthors(null);	
+		for(Author aAuthor :aList) {
+			System.out.println(aAuthor.getAuthorName()+", "+ aAuthor.getAuthorId());
+		}
+		System.out.println("Enter any key to return to previous");
+		int userIn = scanner();
+		 adminMenu();
+ }
+ 
+ 
+ public void editGenres() {
+	 actionList("Genres");
+	 int userIn = scanner();
+	 switch(userIn) {
+	 case 1:
+		 System.out.println("");
+		 genreAdd();
+		 break;
+	 case 2:
+		 System.out.println("");
+		 genreUpdate();
+		 break;
+	 case 3:
+		 System.out.println("");
+		 genreDelete();
+		 break;
+	 case 4:
+		 System.out.println("");
+		 genreRead();
+		 break;
+	 case 5:
+		 System.out.println("");
+		 adminMenu();
+		 break;
+	 }
+ }
+ 
+ 
+ public void genreAdd() {
+	 AdministratorService adminService = new AdministratorService();
+	 System.out.println("Enter in the name of this new genre.");
+	 String newName= scannerS();
+	 Genre genre = new Genre(null,newName);
+	 adminService.addGenre(genre);
+	 adminMenu();
+ }
+ 
+ 
+ public void genreUpdate() {
+	 AdministratorService adminService = new AdministratorService();
+	 Genre genre = genreSelector2();
+	 System.out.println("Enter in new genre name for the genre formly known as "+genre.getGenreName());
+	 String newName= scannerS();
+	 genre.setGenreName(newName);
+	 adminService.updateGenre(genre);
+	 adminMenu();
+ }
+ 
+ 
+ 
+ public void genreDelete() {
+	 AdministratorService adminService = new AdministratorService();
+	 Genre genre = genreSelector2();
+	 adminService.deleteGenre(genre);
+	 adminMenu();
+ }
+ 
+ 
+ public void genreRead() {
+		AdministratorService adminService = new AdministratorService();
+		List<Genre>bList = new ArrayList<>();
+		List<Genre> aList = adminService.getGenres();	
+		for(Genre aGenre :aList) {
+			System.out.println(aGenre.getGenreName());
+		}
+		System.out.println("Enter any key to return to previous");
+		int userIn = scanner();
+		 adminMenu();
+}
+ 
+ 
+ 
+ 
+ public void editPublisher() {
+	 actionList("Publisher");
+	 int userIn = scanner();
+	 switch(userIn) {
+	 case 1:
+		 System.out.println("");
+		 publisherAdd();
+		 break;
+	 case 2:
+		 System.out.println("");
+		 publisherUpdate();
+		 break;
+	 case 3:
+		 System.out.println("");
+		 publisherDelete();
+		 break;
+	 case 4:
+		 System.out.println("");
+		 publisherRead();
+		 break;
+	 case 5:
+		 System.out.println("");
+		 adminMenu();
+		 break;
+	 }
+ }
+ 
+ 
+ public void publisherAdd() {
+	 AdministratorService adminService = new AdministratorService();
+	 System.out.println("Enter in the name of this new publisher.");
+	 String newName= scannerS();
+	 Publisher publisher = new Publisher(null,newName , null);
+	 adminService.addPublisher(publisher);
+	 adminMenu();
+ }
+ 
+ 
+ public void publisherUpdate() {
+	 AdministratorService adminService = new AdministratorService();
+	 Publisher publisher = publisherSelector();
+	 System.out.println("Enter in new publisher name for the publisher formly known as "+publisher.getPublisherName());
+	 String newName= scannerS();
+	 publisher.setPublisherName(newName);
+	 adminService.updatePublisher(publisher);
+	 adminMenu();
+ }
+ 
+ 
+ 
+ public void publisherDelete() {
+	 AdministratorService adminService = new AdministratorService();
+	 Publisher publisher = publisherSelector();
+	 adminService.deletePublisher(publisher);
+	 adminMenu();
+ }
+ 
+ 
+ public void publisherRead() {
+//		AdministratorService adminService = new AdministratorService();
+//		List<Publisher>bList = new ArrayList<>();
+//		List<Publisher> aList = adminService.getPublisher();	
+//		for(Publisher aPublisher :aList) {
+//			System.out.println(aPublisher.getPublisherName());
+//		}
+	 	showPublishers();
+		System.out.println("Enter any key to return to previous");
+		int userIn = scanner();
+		 adminMenu();
+}
+ 
+ 
+ 
+ public void editBranches() {
+	 actionList("Branch");
+	 int userIn = scanner();
+	 switch(userIn) {
+	 case 1:
+		 System.out.println("");
+		 branchAdd();
+		 break;
+	 case 2:
+		 System.out.println("");
+		 branchUpdate();
+		 break;
+	 case 3:
+		 System.out.println("");
+		 branchDelete();
+		 break;
+	 case 4:
+		 System.out.println("");
+		 branchRead();
+		 break;
+	 case 5:
+		 System.out.println("");
+		 adminMenu();
+		 break;
+	 }
+ }
+ 
+ 
+ public void branchAdd() {
+	 LibrarianService librarianService = new LibrarianService();
+	 System.out.println("Enter the name for the new branch");
+	 String branchName = scannerS();
+	 System.out.println("Enter an address for the new branch");
+	 String branchAddress = scannerS();
+	 Branch branch = new Branch(null, branchName, branchAddress );
+	 librarianService.addBranch(branch);
+	 //branch.setBranchAddress(branchAddress);
+	 librarianService.updateBranchAddress(branch);
+	 adminMenu();
 	 
  }
+ 
+ public void branchUpdate() {
+	 LibrarianUi librarianUi = new LibrarianUi();
+	 Branch branch = pickBranch();
+	 librarianUi.updateLibrary2(branch);
+	 adminMenu();
+	 
+ }
+ 
+ public void branchDelete() {
+	 LibrarianService librarianService = new LibrarianService();
+	 Branch branch = pickBranch();
+	 librarianService.deleteBranch(branch);
+	 adminMenu();
+ }
+ 
+ public void branchRead() {
+	 LibrarianService librarianService = new LibrarianService();
+	 List<Branch> bList =librarianService.getBranches(null);
+	 for(Branch branch : bList) {
+		 System.out.println(branch.getBranchName()+", "+branch.getBranchAddress());
+	 }
+	 System.out.println("Enter anything to return to adminMenu");
+	 String s = scannerS();
+	 adminMenu();
+ }
+ 
+ 
+ public Branch pickBranch() {
+	 LibrarianService librarianService = new LibrarianService();
+	 System.out.println("Please select a branch.");
+	 List<Branch> bList =librarianService.getBranches(null);
+	 int i =0;
+	 for(Branch branch : bList) {
+		 i++;
+		 System.out.println(i+") "+branch.getBranchName()+", "+branch.getBranchAddress());
+	 }
+	 
+		System.out.println((i+1)+") Quit to previous");
+	   int userIn = scanner();
+			
+			if(userIn==i+1) {
+				System.out.println("");
+				adminMenu();
+				System.exit(0);
+			}
+			
+			Branch tBranch= bList.get(userIn-1);
+			return tBranch;
+ }
+ 
  
  public void loansReadAll() {
 	 BorrowerService bS = new BorrowerService();
@@ -307,7 +670,7 @@ public class AdminUi {
 		Scanner sc = new Scanner(System.in); 
 		String userIn = "placeholder";
 		try {
-			userIn= sc.next();	
+			userIn= sc.nextLine();	
 		}
 		catch(InputMismatchException exception)
 		{
@@ -441,6 +804,36 @@ int userIn = scanner();
 		return tAuthor;
 	}
 	
+	
+	public Genre genreSelector2() {
+		AdministratorService adminService = new AdministratorService();
+		
+		List<Genre> aList = adminService.getGenres();
+		int userIn = 0;
+		int i =0;
+	
+	
+		System.out.println("Please select a Genre");
+		for(Genre aGenre :aList) {
+			i++;
+			System.out.println(i+") "+aGenre.getGenreName());
+		}
+		System.out.println((i+1)+") Quit to previous");
+    userIn = scanner();
+		
+		if(userIn==i+1) {
+			System.out.println("");
+			adminMenu();
+			System.exit(0);
+		}
+		
+		Genre tGenre= aList.get(userIn-1);
+	
+	
+		return tGenre;
+	}
+	
+	
 	public Book pickABook() {
 		 AdministratorService adminService = new AdministratorService();
 			List<Book> bList = adminService.getBooks(null);
@@ -491,11 +884,15 @@ int userIn = scanner();
 		case 4:
 			System.out.println("");
 			return 4;
+		case 5:
+			System.out.println("");
+			adminMenu();
+			break;
 			default:
 				System.out.println("Error with selection");
 				return 0;
 		}
-		
+		return 0;
 	}
 	
 //	public <T> List<T> selectFRomList(List<T> obList){

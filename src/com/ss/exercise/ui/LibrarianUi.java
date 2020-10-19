@@ -196,6 +196,45 @@ public class LibrarianUi {
 		///return?
 	}
 	
+	
+	
+	public void updateLibrary2(Branch userBranch) {
+		LibrarianService librarianService = new LibrarianService();
+		System.out.println("You have chosen to update the Branch with Branch Id: "+userBranch.getBranchId()+
+				" and Branch Name: "+userBranch.getBranchName()+". Enter ‘quit’ at any prompt to cancel operation.");
+		System.out.println("Please enter new branch name or enter N/A for no change:");
+		
+		String userIn = scannerS();
+		if(userIn.equalsIgnoreCase("quit")) {
+			branchOptions(userBranch);
+			return;
+		}
+		
+		if(userIn.equalsIgnoreCase("N/A")||userIn.equalsIgnoreCase(""))
+			System.out.println("No change");
+		else {
+			userBranch.setBranchName(userIn);
+			librarianService.updateBranchName(userBranch);
+		}
+		System.out.println("Please enter new branch address or enter N/A for no change:");
+		userIn = scannerS();
+		if(userIn.equalsIgnoreCase("quit")) {
+			branchOptions(userBranch);
+			return;
+		}
+		
+		if(userIn.equalsIgnoreCase("N/A")||userIn.equalsIgnoreCase(""))
+			System.out.println("No change");
+		else {
+			userBranch.setBranchAddress(userIn);
+			librarianService.updateBranchAddress(userBranch);
+		}
+		
+		
+		System.out.println("Succefully updated");
+		
+	}
+	
 	public int scanner() {
 		Scanner sc = new Scanner(System.in); 
 		int userIn = 0;
@@ -215,7 +254,7 @@ public class LibrarianUi {
 		Scanner sc = new Scanner(System.in); 
 		String userIn = "placeholder";
 		try {
-			userIn= sc.next();	
+			userIn= sc.nextLine();	
 		}
 		catch(InputMismatchException exception)
 		{

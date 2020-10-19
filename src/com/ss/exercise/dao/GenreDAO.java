@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ss.exercise.entity.Author;
 import com.ss.exercise.entity.Branch;
 import com.ss.exercise.entity.Genre;
 
@@ -33,14 +34,24 @@ public class GenreDAO extends BaseDAO<Genre> {
 		save("INSERT INTO tbl_book_genres VALUES (?, ?)", new Object[] { bookId, genreId });
 	}
 	
+	
+	
 	public void updateGenre(Genre genre)throws ClassNotFoundException, SQLException {
 		save("UPDATE tbl_genre SET genreName = ? WHERE genreId = ?",
 				new Object[] { genre.getGenreName(), genre.getGenreId() });
 	}
-	public void deleteGenere(Genre genre)throws ClassNotFoundException, SQLException {
+	public void deleteGenre(Genre genre)throws ClassNotFoundException, SQLException {
 		save("DELETE FROM tbl_genre WHERE genreId = ?", new Object[] { genre.getGenreId() });
 	}
 	
+	public Integer addGenreWithPk(Genre genre) throws ClassNotFoundException, SQLException {
+		return saveWithPk("INSERT INTO tbl_genre (genreName) VALUES (?)", new Object[] { genre.getGenreName() });
+	}
+	
+	public void addGenre(Genre genre) throws ClassNotFoundException, SQLException {
+		 save("INSERT INTO tbl_genre (genreName) VALUES (?)", new Object[] { genre.getGenreName() });
+	}
+
 
 	
 	

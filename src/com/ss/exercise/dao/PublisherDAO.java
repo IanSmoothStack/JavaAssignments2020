@@ -13,7 +13,7 @@ import com.ss.exercise.entity.Book;
 import com.ss.exercise.entity.Publisher;
 
 /**
- * @author Ian
+ * @publisher Ian
  *
  */
 public class PublisherDAO extends BaseDAO<Publisher> {
@@ -43,13 +43,13 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 	}
 
 	
-//	public void updateAuthor(Author author) throws ClassNotFoundException, SQLException {
-//	save("UPDATE tbl_author SET authorName = ? WHERE authorId = ?",
-//			new Object[] { author.getAuthorName(), author.getAuthorId() });
+//	public void updateAuthor(Author publisher) throws ClassNotFoundException, SQLException {
+//	save("UPDATE tbl_publisher SET publisherName = ? WHERE publisherId = ?",
+//			new Object[] { publisher.getAuthorName(), publisher.getAuthorId() });
 //}
 //
-//public void deleteAuthor(Author author) throws ClassNotFoundException, SQLException {
-//	save("DELETE FROM tbl_author WHERE authorId = ?", new Object[] { author.getAuthorId() });
+//public void deleteAuthor(Author publisher) throws ClassNotFoundException, SQLException {
+//	save("DELETE FROM tbl_publisher WHERE publisherId = ?", new Object[] { publisher.getAuthorId() });
 //}
 	
 	public void updatePublisher(Publisher publisher)throws ClassNotFoundException, SQLException {
@@ -58,8 +58,17 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 	}
 	
 	public void deletePublisher(Publisher publisher)throws ClassNotFoundException, SQLException {
-		save("DELETE FROM tbl_publisher WHERE pubId = ?", new Object[] { publisher.getPublisherId()});
+		save("DELETE FROM tbl_publisher WHERE publisherId = ?", new Object[] { publisher.getPublisherId()});
 	}
+	
+	public Integer addPublisherWithPk(Publisher publisher) throws ClassNotFoundException, SQLException {
+		return saveWithPk("INSERT INTO tbl_publisher (publisherName) VALUES (?)", new Object[] { publisher.getPublisherName() });
+	}
+	
+	public void addPublisher(Publisher publisher) throws ClassNotFoundException, SQLException {
+		 save("INSERT INTO tbl_publisher (publisherName) VALUES (?)", new Object[] { publisher.getPublisherName() });
+	}
+	
 	
 	
 	@Override
@@ -73,5 +82,7 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 		}
 		return publishers;
 	}
+
+	
 
 }

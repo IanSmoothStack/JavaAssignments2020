@@ -17,6 +17,10 @@ public class AuthorDAO extends BaseDAO<Author> {
 	public void addAuthor(Author author) throws ClassNotFoundException, SQLException {
 		save("INSERT INTO tbl_author (authorName) VALUES (?)", new Object[] { author.getAuthorName() });
 	}
+	
+	public Integer addAuthorWithPk(Author author) throws ClassNotFoundException, SQLException {
+		return saveWithPk("INSERT INTO tbl_author (authorName) VALUES (?)", new Object[] { author.getAuthorName() });
+	}
 
 	public void updateAuthor(Author author) throws ClassNotFoundException, SQLException {
 		save("UPDATE tbl_author SET authorName = ? WHERE authorId = ?",
@@ -49,4 +53,6 @@ public class AuthorDAO extends BaseDAO<Author> {
 		}
 		return authors;
 	}
+
+	
 }

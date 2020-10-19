@@ -44,6 +44,25 @@ public class BranchDAO extends BaseDAO<Branch> {
 		return read("SELECT * FROM tbl_library_branch WHERE branchName LIKE ?", new Object[] {searchString});
 	}
 	
+	//public void deleteAuthor(Author publisher) throws ClassNotFoundException, SQLException {
+//	save("DELETE FROM tbl_publisher WHERE publisherId = ?", new Object[] { publisher.getAuthorId() });
+//}
+//	public Integer addPublisherWithPk(Publisher publisher) throws ClassNotFoundException, SQLException {
+//	return saveWithPk("INSERT INTO tbl_publisher (publisherName) VALUES (?)", new Object[] { publisher.getPublisherName() });
+//}
+	
+	public void deleteBranch(Branch branch) throws ClassNotFoundException, SQLException {
+		save("DELETE FROM tbl_library_branch  WHERE branchId = ?", new Object[] { branch.getBranchId() });
+	}
+	
+	public Integer addBranchWithPk(Branch branch) throws ClassNotFoundException, SQLException {
+	return saveWithPk("INSERT INTO tbl_library_branch (branchName) VALUES (?)", new Object[] { branch.getBranchName() });
+}
+	
+	public void addBranch(Branch branch) throws ClassNotFoundException, SQLException {
+	 save("INSERT INTO tbl_library_branch (branchName) VALUES (?)", new Object[] { branch.getBranchName() });
+}
+	
 
 	@Override
 	public List<Branch> extractData(ResultSet rs) throws SQLException, ClassNotFoundException {
