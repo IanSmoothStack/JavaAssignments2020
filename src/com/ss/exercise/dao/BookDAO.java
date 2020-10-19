@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.ss.exercise.entity.Book;
 import com.ss.exercise.entity.NumberOfCopies;
+import com.ss.exercise.entity.Publisher;
 
 public class BookDAO extends BaseDAO<Book>{
 
@@ -23,6 +24,9 @@ public class BookDAO extends BaseDAO<Book>{
 		return saveWithPk("INSERT INTO tbl_book (title) VALUES (?)", new Object[] { book.getTitle() });
 	}
 	
+	public Integer addBookWithPk2(Book book) throws ClassNotFoundException, SQLException {
+		return saveWithPk("INSERT INTO tbl_book (title) VALUES '"+book.getTitle()+"'", null);
+	}
 	
 
 	public void updateBook(Book book) throws ClassNotFoundException, SQLException {
@@ -50,9 +54,17 @@ public class BookDAO extends BaseDAO<Book>{
 	public List<Book> extractData(ResultSet rs) throws SQLException, ClassNotFoundException {
 		List<Book> books = new ArrayList<>();
 		AuthorDAO adao = new AuthorDAO(conn);
+		GenreDAO gdao = new GenreDAO(conn);
+		PublisherDAO pdao = new PublisherDAO(conn);
 		while (rs.next()) {
-			Book b = new Book(rs.getInt("bookId"), rs.getString("title"),rs.getInt("pubId"));
-			b.setAuthors(adao.read("select * from tbl_author where authorId IN (select authorId from tbl_book_authors where bookId = ?)", new Object[] {b.getBookId(), b.getPubId()}));
+//			Book b = new Book(rs.getInt("bookId"), rs.getString("title"),rs.getInt("pubId"));
+			Book b = new Book(rs.getInt("bookId"), rs.getString("title"));
+			b.setAuthors(adao.read("select * from tbl_author where authorId IN (select authorId from tbl_book_authors where bookId = ?)", new Object[] {b.getBookId()}));
+			b.setGenres(gdao.read("select * from tbl_genre where genreId IN (select genreId from tbl_book_genres where bookId = ?)", new Object[] {b.getBookId()}));
+			List<Publisher> pList =( pdao.read("select * from tbl_publisher where publisherId IN (select publisherId from tbl_book_publisher where bookId = ?)", new Object[] {b.getBookId()}));
+			if(!pList.isEmpty())
+			b.setPublisher(pList.get(0));
+			
 			//b.setGenres()
 			books.add(b);
 		}

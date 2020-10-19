@@ -16,10 +16,11 @@ public class Book {
 	private List<Branch> branches;
 	private Publisher publisher;
 	private Integer pubId;
+	
 	public Integer getBookId() {
 		return bookId;
 	}
-	public Book(Integer bookId, String title, Integer pubId) {
+	public Book(Integer bookId, String title/*, Integer pubId*/) {
 		super();
 		this.bookId = bookId;
 		this.title = title;
@@ -59,9 +60,9 @@ public class Book {
 		this.publisher = publisher;
 	}
 	public Integer getPubId() {
-		return pubId;
+		return publisher.getPublisherId();
 	}
 	public void setPubId(Integer pubId) {
-		this.pubId = pubId;
+		this.publisher.setPublisherId(pubId);
 	}
 }
