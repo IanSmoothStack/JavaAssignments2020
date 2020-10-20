@@ -50,7 +50,7 @@ public class BorrowerService {
 			
 			}catch (ClassNotFoundException | SQLException e) {
 				e.printStackTrace();
-			
+				 System.out.println(" success");
 			}
 	}
 	public void updateLoan(Loans loan) {
@@ -58,7 +58,7 @@ public class BorrowerService {
 			LoansDAO ldao = new LoansDAO(conn);
 			ldao.updateLoan(loan);
 			conn.commit();
-			
+			 System.out.println(" success");
 			}catch (ClassNotFoundException | SQLException e) {
 				e.printStackTrace();
 			}
@@ -69,7 +69,7 @@ public class BorrowerService {
 			LoansDAO ldao = new LoansDAO(conn);
 			ldao.updateLoanOverride(loan);
 			conn.commit();
-			
+			 System.out.println(" success");
 			}catch (ClassNotFoundException | SQLException e) {
 				e.printStackTrace();
 			}

@@ -38,6 +38,10 @@ public class GenreDAO extends BaseDAO<Genre> {
 		save("DELETE FROM tbl_book_genres WHERE bookId = ?", new Object[] { bookId});
 	}
 	
+	public void deletedBookGenre(Integer genreId) throws SQLException, ClassNotFoundException {
+		save("DELETE FROM tbl_book_genres WHERE genreId = ?", new Object[] { genreId});
+	}
+	
 	
 	public void updateGenre(Genre genre)throws ClassNotFoundException, SQLException {
 		save("UPDATE tbl_genre SET genreName = ? WHERE genreId = ?",

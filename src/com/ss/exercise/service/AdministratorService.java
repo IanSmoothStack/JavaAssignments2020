@@ -149,6 +149,7 @@ public class AdministratorService {
 			BookDAO bdao = new BookDAO(conn);
 				 bdao.updateBook(bBook);
 				 conn.commit();
+				 System.out.println("Update successful");
 				 
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -183,6 +184,7 @@ public class AdministratorService {
 							pdao.addBookPublishers(book.getBookId(), book.getPubId());
 						}
 				 conn.commit();
+				 System.out.println("Update successful");
 				 
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -191,46 +193,23 @@ public class AdministratorService {
 	}
 	
 	
-//	public void updateBookAuthors(Book bBook) {
-//		try(Connection conn = conUtil.getConnection()) {
-//			BookDAO bdao = new BookDAO(conn);
-//				 bdao.updateBook(bBook);
-//				 
-//		} catch (ClassNotFoundException | SQLException e) {
-//			e.printStackTrace();
-//			
-//		}
-//	}
-//	
-//	public void updateBookPublisher(Book bBook) {
-//		try(Connection conn = conUtil.getConnection()) {
-//			BookDAO bdao = new BookDAO(conn);
-//				 bdao.updateBook(bBook);
-//				 
-//		} catch (ClassNotFoundException | SQLException e) {
-//			e.printStackTrace();
-//			
-//		}
-//	}
-//	
-//	public void updateBookGenre(Book bBook) {
-//		try(Connection conn = conUtil.getConnection()) {
-//			BookDAO bdao = new BookDAO(conn);
-//				 bdao.updateBook(bBook);
-//				 
-//		} catch (ClassNotFoundException | SQLException e) {
-//			e.printStackTrace();
-//			
-//		}
-//	}
+
 	
 	
 	
 	public void deleteBook(Book book) {
 		try(Connection conn = conUtil.getConnection()) {
-			BookDAO adao = new BookDAO(conn);
-				 adao.deleteBook(book);
+			BookDAO bdao = new BookDAO(conn);
+			AuthorDAO adao = new AuthorDAO(conn);
+			GenreDAO gdao = new GenreDAO(conn);
+			PublisherDAO pdao = new PublisherDAO(conn);
+			int bookId = book.getBookId();
+				adao.deleteBookAuthors(bookId);
+				gdao.deleteBookGenres(bookId);
+				pdao.deleteBookPublishers(bookId);
+				 bdao.deleteBook(book);
 				 conn.commit();
+				 System.out.println("Delete successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -258,8 +237,10 @@ public class AdministratorService {
 	public void deleteAuthor(Author author) {
 		try(Connection conn = conUtil.getConnection()) {
 			AuthorDAO adao = new AuthorDAO(conn);
+				adao.deletedBookAuthor(author.getAuthorId());
 				 adao.deleteAuthor(author);
 				 conn.commit();
+				 System.out.println("Delete successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -271,6 +252,7 @@ public class AdministratorService {
 				// adao.addAuthor(author);
 				 author.setAuthorId(adao.addAuthorWithPk(author));
 				 conn.commit();
+				 System.out.println("Additon successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -282,6 +264,7 @@ public class AdministratorService {
 			AuthorDAO adao = new AuthorDAO(conn);
 				 adao.updateAuthor(author);
 				 conn.commit();
+				 System.out.println("Update successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -294,8 +277,10 @@ public class AdministratorService {
 	public void deleteGenre(Genre genre) {
 		try(Connection conn = conUtil.getConnection()) {
 			GenreDAO adao = new GenreDAO(conn);
+				adao.deletedBookGenre(genre.getGenreId());
 				 adao.deleteGenre(genre);
 				 conn.commit();
+				 System.out.println("Delete successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -307,6 +292,7 @@ public class AdministratorService {
 				// adao.addGenre(genre);
 				 genre.setGenreId(adao.addGenreWithPk(genre));
 				 conn.commit();
+				 System.out.println("Additon successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -318,6 +304,7 @@ public class AdministratorService {
 			GenreDAO adao = new GenreDAO(conn);
 				 adao.updateGenre(genre);
 				 conn.commit();
+				 System.out.println("Update successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -329,8 +316,10 @@ public class AdministratorService {
 	public void deletePublisher(Publisher publisher) {
 		try(Connection conn = conUtil.getConnection()) {
 			PublisherDAO adao = new PublisherDAO(conn);
-				 adao.deletePublisher(publisher);
+			adao.deletedBookPublisher(publisher.getPublisherId());
+			adao.deletePublisher(publisher);
 				 conn.commit();
+				 System.out.println("Delete successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -342,6 +331,7 @@ public class AdministratorService {
 				// adao.addPublisher(publisher);
 				 publisher.setPublisherId(adao.addPublisherWithPk(publisher));
 				 conn.commit();
+				 System.out.println("Additon successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -353,6 +343,7 @@ public class AdministratorService {
 			PublisherDAO adao = new PublisherDAO(conn);
 				 adao.updatePublisher(publisher);
 				 conn.commit();
+				 System.out.println("Update successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -367,6 +358,7 @@ public class AdministratorService {
 			BorrowerDAO adao = new BorrowerDAO(conn);
 				 adao.deleteBorrower(borrower);
 				 conn.commit();
+				 System.out.println("Delete successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -382,6 +374,7 @@ public class AdministratorService {
 				 adao.updatePhoneBorrower(borrower);
 				 adao.updateAddressBorrower(borrower);
 				 conn.commit();
+				 System.out.println("Additon successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -395,6 +388,7 @@ public class AdministratorService {
 				 adao.updatePhoneBorrower(borrower);
 				 adao.updateAddressBorrower(borrower);
 				 conn.commit();
+				 System.out.println("Update successful");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			

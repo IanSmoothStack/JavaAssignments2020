@@ -197,7 +197,7 @@ public class AdminUi {
 		 		pubName=publisher.getPublisherName();
 			System.out.println("Book Title: " + b.getTitle());
 			System.out.println("    Author(s): "+authorString);
-			System.out.println("    Genere(s): "+genreString);
+			System.out.println("    Genre(s): "+genreString);
 			System.out.println("    Publisher: "+pubName);
 			
 		}
@@ -263,22 +263,7 @@ public class AdminUi {
 	
  public void updateBook(){
 	 AdministratorService adminService = new AdministratorService();
-	
-//		List<Book> bList = adminService.getBooks(null);
-//		int i =0;
-//		for(Book aBook :bList) {
-//			i++;
-//			System.out.println(i+") "+aBook.getTitle()+", "+ aBook.getAuthors()+", "+aBook.getBookId());
-//		}
-//		System.out.println((i+1)+") Quit to previous");
-//
-//		int userIn = scanner();
-//		
-//		if(userIn==i+1) {
-//			System.out.println("");
-//			adminMenu();
-//		}
-//		Book selectedBook = bList.get(userIn-1);
+
 	 	Book selectedBook = pickABook();
 	 	List<Author> aList = selectedBook.getAuthors();
 	 	List<Genre> gList = selectedBook.getGenres();
@@ -451,7 +436,7 @@ public class AdminUi {
 		List<Author>bList = new ArrayList<>();
 		List<Author> aList = adminService.getAuthors(null);	
 		for(Author aAuthor :aList) {
-			System.out.println(aAuthor.getAuthorName()+", "+ aAuthor.getAuthorId());
+			System.out.println(aAuthor.getAuthorName());
 		}
 		System.out.println("Enter any key to return to previous");
 		int userIn = scanner();
@@ -912,7 +897,7 @@ public class AdminUi {
 		System.out.println("Please select an Author");
 		for(Author aAuthor :aList) {
 			i++;
-			System.out.println(i+") "+aAuthor.getAuthorName()+", "+ aAuthor.getAuthorId());
+			System.out.println(i+") "+aAuthor.getAuthorName());
 		}
 		System.out.println((i+1)+") Quit to previous");
     userIn = scanner();
@@ -982,7 +967,7 @@ public class AdminUi {
 		int i =0;
 		for(Publisher aPublisher :pList) {
 			i++;
-			System.out.println(i+") "+aPublisher.getPublisherName()+", "+ aPublisher.getPublisherId());
+			System.out.println(i+") "+aPublisher.getPublisherName()+", "+ aPublisher.getPublisherAddress());
 		}
 		System.out.println((i+1)+") Quit to previous");
 int userIn = scanner();
@@ -1009,7 +994,7 @@ int userIn = scanner();
 		System.out.println("Please select an Author");
 		for(Author aAuthor :aList) {
 			i++;
-			System.out.println(i+") "+aAuthor.getAuthorName()+", "+ aAuthor.getAuthorId());
+			System.out.println(i+") "+aAuthor.getAuthorName());
 		}
 		System.out.println((i+1)+") Quit to previous");
     userIn = scanner();
@@ -1120,25 +1105,7 @@ int userIn = scanner();
 		}
 		return 0;
 	}
-	
-//	public <T> List<T> selectFRomList(List<T> obList){
-//		//List<Branch> branches = new ArrayList<>();
-//		int i =0;
-//		for(T obThing :obList) {
-//			i++;
-//			System.out.println(i+") "+aBook.getTitle()+", "+ aBook.getAuthors());
-//		}
-//		System.out.println((i+1)+") Quit to previous");
-//
-//		int userIn = scanner();
-//		
-//		if(userIn==i+1) {
-//			System.out.println("");
-//			branchOptions(userBranch);
-//			return;
-//		}
-//		Book selectedObject = bList.get(userIn-1);
-//	}
+
 	
 	
 }

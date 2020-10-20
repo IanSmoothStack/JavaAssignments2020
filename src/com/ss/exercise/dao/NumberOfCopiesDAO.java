@@ -39,6 +39,10 @@ public class NumberOfCopiesDAO extends BaseDAO<NumberOfCopies> {
 		conn.commit();
 	}
 	
+	public void deletedBranch(Integer branchId) throws SQLException, ClassNotFoundException {
+		save("DELETE FROM tbl_book_copies WHERE branchId = ?", new Object[] { branchId});
+	}
+	
 
 	@Override
 	public List<NumberOfCopies> extractData(ResultSet rs) throws SQLException, ClassNotFoundException {

@@ -28,6 +28,7 @@ public class LibrarianService {
 		try(Connection conn = conUtil.getConnection()) {
 			BranchDAO bdao = new BranchDAO(conn);
 				 bdao.updateBranchName(userBranch);
+				 System.out.println(" success");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -77,7 +78,7 @@ public class LibrarianService {
 			NumberOfCopiesDAO ndao = new NumberOfCopiesDAO(conn);
 			
 				 ndao.updateNumOfCopies(bookId, branchId, newNumOfCopies);
-			
+				 System.out.println(" success");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
@@ -89,7 +90,7 @@ public class LibrarianService {
 				NumberOfCopiesDAO ndao = new NumberOfCopiesDAO(conn);
 				
 					 ndao.addCopies( bookId, branchId, newNumOfCopies);
-				
+					 System.out.println(" success");
 			} catch (ClassNotFoundException | SQLException e) {
 				e.printStackTrace();
 				
@@ -101,8 +102,11 @@ public class LibrarianService {
 		public void deleteBranch(Branch branch) {
 			try(Connection conn = conUtil.getConnection()) {
 				BranchDAO adao = new BranchDAO(conn);
+				NumberOfCopiesDAO ndao = new NumberOfCopiesDAO(conn);
+					 ndao.deletedBranch(branch.getBranchId());
 					 adao.deleteBranch(branch);
 					 conn.commit();
+					 System.out.println(" success");
 			} catch (ClassNotFoundException | SQLException e) {
 				e.printStackTrace();
 				
@@ -114,6 +118,7 @@ public class LibrarianService {
 					// adao.addBranch(branch);
 					 branch.setBranchId(adao.addBranchWithPk(branch));
 					 conn.commit();
+					 System.out.println(" success");
 			} catch (ClassNotFoundException | SQLException e) {
 				e.printStackTrace();
 				

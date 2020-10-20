@@ -52,6 +52,10 @@ public class AuthorDAO extends BaseDAO<Author> {
 	public void deleteBookAuthors(Integer bookId) throws ClassNotFoundException, SQLException {
 		save("DELETE FROM tbl_book_authors WHERE bookId = ?", new Object[] { bookId});
 	}
+	
+	public void deletedBookAuthor(Integer authorId) throws ClassNotFoundException, SQLException {
+		save("DELETE FROM tbl_book_authors WHERE authordId = ?", new Object[] { authorId});
+	}
 
 	@Override
 	public List<Author> extractData(ResultSet rs) throws SQLException {
