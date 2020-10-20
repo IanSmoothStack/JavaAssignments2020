@@ -52,7 +52,7 @@ public class LibraryUi {
 			adminUi.adminMenu();
 			break;
 		case 3:
-			System.out.println("Borrow");
+			System.out.println("");
 			BorrowerUi borrowerUi = new BorrowerUi();
 			borrowerUi.borrowerMenu();
 			break;

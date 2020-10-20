@@ -117,22 +117,9 @@ public class LibrarianUi {
 		System.out.println("Please select the book you wish to update.");
 		AdministratorService adminService = new AdministratorService();
 		LibrarianService librarianService = new LibrarianService();
-		List<Book> bList = adminService.getBooks(null);
-		int i =0;
-		for(Book aBook :bList) {
-			i++;
-			System.out.println(i+") "+aBook.getTitle()+", "+ aBook.getAuthors());
-		}
-		System.out.println((i+1)+") Quit to previous");
+		AdminUi adminUi = new AdminUi();
 
-		int userIn = scanner();
-		
-		if(userIn==i+1) {
-			System.out.println("");
-			branchOptions(userBranch);
-			return;
-		}
-		Book selectedBook = bList.get(userIn-1);
+		Book selectedBook = adminUi.pickABook();
 		int bookId=selectedBook.getBookId();
 		int branchId = userBranch.getBranchId();
 		System.out.println("You have selected the book : "+ selectedBook.getTitle()+ ".");
@@ -145,7 +132,7 @@ public class LibrarianUi {
 		}
 		System.out.println("The "+userBranch.getBranchName()+" branch currently have "+numCshow+" number of copies of the book "+selectedBook.getTitle()+".");
 		System.out.println("Please enter the new number of copies");
-		 userIn = scanner();
+		int userIn = scanner();
 		 if(!noc.isEmpty()) {
 			 librarianService.updateNumOfCopies(bookId, branchId, userIn);
 		 }

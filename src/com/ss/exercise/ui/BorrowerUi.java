@@ -186,7 +186,7 @@ public class BorrowerUi {
 			else {
 				for(Loans aLoan : userLoans) {
 					i++;
-					System.out.println(i+") Loan: bkI "+ aLoan.getBookId()+ " brnI "+aLoan.getBranchId()+" cN "+aLoan.getCardNo());
+					System.out.println(i+") Loan: bookId "+ aLoan.getBookId()+ " branchId "+aLoan.getBranchId()+" cardNo "+aLoan.getCardNo());
 					System.out.println("      Out "+ aLoan.getDateOut()+ " Due "+aLoan.getDueDate()+" In "+aLoan.getDateIn());
 				}
 				System.out.println((i+1)+") Quit to previous");

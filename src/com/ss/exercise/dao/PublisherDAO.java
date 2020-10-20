@@ -35,9 +35,7 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 		return read("SELECT * FROM tbl_publisher WHERE publisherName LIKE ?", new Object[] {searchString});
 	}
 	
-//	public void addBookGenres(Integer bookId, Integer genreId) throws SQLException, ClassNotFoundException {
-//	save("INSERT INTO tbl_book_genres VALUES (?, ?)", new Object[] { bookId, genreId });
-//}
+
 	public void addBookPublishers(Integer bookId, Integer pubId)throws SQLException, ClassNotFoundException {
 		save("INSERT INTO tbl_book_publisher VALUES (?, ?)", new Object[] { bookId, pubId });
 	}
@@ -50,15 +48,6 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 		save("DELETE FROM tbl_book_publisher WHERE publisherId = ?", new Object[] { publisherId});
 	}
 
-	
-//	public void updateAuthor(Author publisher) throws ClassNotFoundException, SQLException {
-//	save("UPDATE tbl_publisher SET publisherName = ? WHERE publisherId = ?",
-//			new Object[] { publisher.getAuthorName(), publisher.getAuthorId() });
-//}
-//
-//public void deleteAuthor(Author publisher) throws ClassNotFoundException, SQLException {
-//	save("DELETE FROM tbl_publisher WHERE publisherId = ?", new Object[] { publisher.getAuthorId() });
-//}
 	
 	public void updatePublisher(Publisher publisher)throws ClassNotFoundException, SQLException {
 		save("UPDATE tbl_publisher SET publisherName = ? WHERE publisherId = ?",

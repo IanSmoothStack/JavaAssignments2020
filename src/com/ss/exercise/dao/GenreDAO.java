@@ -65,15 +65,6 @@ public class GenreDAO extends BaseDAO<Genre> {
 	
 	@Override
 	public List<Genre> extractData(ResultSet rs) throws SQLException, ClassNotFoundException {
-//		List<Branch> branches = new ArrayList<>();
-//		BranchDAO bdao = new BranchDAO(conn);
-//		while (rs.next()) {
-//			//Integer branchId, String branchName, String BranchAddress
-//			Branch b = new Branch(rs.getInt("branchId"), rs.getString("branchName"),rs.getString("BranchAddress"));
-//		
-//			branches.add(b);
-//		}
-//		return branches;
 
 		List<Genre> genres = new ArrayList<>();
 		GenreDAO gdao = new GenreDAO(conn);

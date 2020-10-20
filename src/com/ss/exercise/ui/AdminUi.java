@@ -120,6 +120,10 @@ public class AdminUi {
 			System.out.println("");
 			showBooks();
 			break;
+		 case 5:
+			 System.out.println("");
+			 adminMenu();
+			 break;
 			default:
 				System.out.println("Error with selection");
 		}
@@ -1085,7 +1089,6 @@ int userIn = scanner();
 		case 1:
 			System.out.println("");
 			return 1;
-			//break;
 		case 2:
 			System.out.println("");
 			return 2;
