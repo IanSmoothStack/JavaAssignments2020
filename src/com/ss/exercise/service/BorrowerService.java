@@ -57,10 +57,21 @@ public class BorrowerService {
 		try(Connection conn = conUtil.getConnection()) {
 			LoansDAO ldao = new LoansDAO(conn);
 			ldao.updateLoan(loan);
+			conn.commit();
 			
 			}catch (ClassNotFoundException | SQLException e) {
 				e.printStackTrace();
+			}
+	}
+	
+	public void updateLoanOverride(Loans loan) {
+		try(Connection conn = conUtil.getConnection()) {
+			LoansDAO ldao = new LoansDAO(conn);
+			ldao.updateLoanOverride(loan);
+			conn.commit();
 			
+			}catch (ClassNotFoundException | SQLException e) {
+				e.printStackTrace();
 			}
 	}
 

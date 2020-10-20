@@ -40,8 +40,17 @@ public class AuthorDAO extends BaseDAO<Author> {
 		return read("SELECT * FROM tbl_author WHERE authorName LIKE ?", new Object[] {searchString});
 	}
 	
+	public List<Author> readAuthorsById(int authorId) throws SQLException, ClassNotFoundException {
+		
+		return read("SELECT * FROM tbl_author WHERE authorId LIKE ?", new Object[] {authorId});
+	}
+	
 	public void addBookAuthors(Integer bookId, Integer authorId) throws ClassNotFoundException, SQLException {
 		save("INSERT INTO tbl_book_authors VALUES (?, ?)", new Object[] { bookId, authorId });
+	}
+	
+	public void deleteBookAuthors(Integer bookId) throws ClassNotFoundException, SQLException {
+		save("DELETE FROM tbl_book_authors WHERE bookId = ?", new Object[] { bookId});
 	}
 
 	@Override

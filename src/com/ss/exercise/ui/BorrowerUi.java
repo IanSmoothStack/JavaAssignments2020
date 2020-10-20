@@ -31,8 +31,13 @@ public class BorrowerUi {
 		BorrowerService borrowerService = new BorrowerService();
 		List <Borrower> bList;
 		do{
-		System.out.println("Please enter your card number");
+		System.out.println("Please enter your card number (or enter 0 to return)");
 		int cardNum = scanner();
+		if(cardNum==0) {
+			LibraryUi lU = new LibraryUi();
+			lU.main(null);
+			System.exit(0);
+		}
 		 bList = borrowerService.getBorrower(cardNum);
 		if(bList.isEmpty())
 		{
@@ -150,6 +155,8 @@ public class BorrowerUi {
 		}
 		 librarianService.updateNumOfCopies(loan.getBookId(), loan.getBranchId(), copyNum-1);
 	System.out.println("You have checked out " +userBook.getTitle()+" it is due at "+dueDate);
+	System.out.println("");
+		borrowerMenu();
 	
 	}
 	
@@ -204,7 +211,7 @@ public class BorrowerUi {
 					copyNum=noc2.getNumOfCopies();
 				}
 				 librarianService.updateNumOfCopies(sLoan.getBookId(), sLoan.getBranchId(), copyNum+1);
-				
+				 borrowerMenu();
 			}
 	}
 	
@@ -253,7 +260,7 @@ public class BorrowerUi {
 		Scanner sc = new Scanner(System.in); 
 		String userIn = "placeholder";
 		try {
-			userIn= sc.next();	
+			userIn= sc.nextLine();	
 		}
 		catch(InputMismatchException exception)
 		{

@@ -65,7 +65,7 @@ public class LibrarianUi {
 		int i =0;
 		for(Branch aBranch :bList) {
 			i++;
-			System.out.println(i+") "+aBranch.getBranchName()+", "+ aBranch.getBranchAddress()+", "+aBranch.getBranchId());
+			System.out.println(i+") "+aBranch.getBranchName()+", "+ aBranch.getBranchAddress());
 		}
 		System.out.println((i+1)+") Quit to previous");
 

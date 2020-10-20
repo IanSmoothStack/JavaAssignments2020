@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ss.exercise.entity.Borrower;
+import com.ss.exercise.entity.Branch;
 
 /**
  * @author Ian
@@ -28,6 +29,45 @@ public class BorrowerDAO extends BaseDAO<Borrower> {
 	public List<Borrower> readBorrowerById(int cardNo)throws SQLException, ClassNotFoundException {
 		return read("SELECT * FROM tbl_borrower WHERE cardNo ="+cardNo,null);
 	}
+	
+	
+	public List<Borrower> readAllBorrowers()throws SQLException, ClassNotFoundException {
+		return read("SELECT * FROM tbl_borrower", null);
+	}
+	
+	
+	public void deleteBorrower(Borrower borrower) throws ClassNotFoundException, SQLException {
+		save("DELETE FROM tbl_borrower  WHERE cardNo = ?", new Object[] { borrower.getCardNo() });
+	}
+	
+	public Integer addBorrowerWithPk(Borrower borrower) throws ClassNotFoundException, SQLException {
+	return saveWithPk("INSERT INTO tbl_borrower (name) VALUES (?)", new Object[] { borrower.getName() });
+	}
+	
+	public void addBorrower(Borrower borrower) throws ClassNotFoundException, SQLException {
+	 save("INSERT INTO tbl_borrower (name) VALUES (?)", new Object[] { borrower.getName() });
+	}
+	public void updateFullBorrower(Borrower borrower) throws ClassNotFoundException, SQLException {
+		save("UPDATE tbl_borrower SET name = ? AND address = ? AND phone = ? WHERE cardNo = ?",
+				new Object[] { borrower.getName(), borrower.getAddress(), borrower.getPhone(), borrower.getCardNo() });
+		}
+	
+	public void updateBorrower(Borrower borrower) throws ClassNotFoundException, SQLException {
+		save("UPDATE tbl_borrower SET name = ? WHERE cardNo = ?",
+				new Object[] { borrower.getName(), borrower.getCardNo() });
+		conn.commit();
+	}
+	public void updatePhoneBorrower(Borrower borrower) throws ClassNotFoundException, SQLException {
+		save("UPDATE tbl_borrower SET phone = ? WHERE cardNo = ?",
+				new Object[] { borrower.getPhone(), borrower.getCardNo() });
+		conn.commit();
+	}
+	public void updateAddressBorrower(Borrower borrower) throws ClassNotFoundException, SQLException {
+		save("UPDATE tbl_borrower SET address = ? WHERE cardNo = ?",
+				new Object[] { borrower.getAddress(), borrower.getCardNo() });
+		conn.commit();
+	}
+	
 
 	@Override
 	public List<Borrower> extractData(ResultSet rs) throws SQLException, ClassNotFoundException {

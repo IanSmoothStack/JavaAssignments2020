@@ -53,7 +53,13 @@ public class LoansDAO extends BaseDAO<Loans> {
 	public void updateLoan( Loans loan) throws ClassNotFoundException, SQLException {
 		save("UPDATE tbl_book_loans SET dateIn = '"+ loan.getDateIn() +"' WHERE bookId = "+loan.getBookId()
 		+" AND branchId = "+loan.getBranchId()+" AND cardNo = "+loan.getCardNo()+" AND dateOut = '"+loan.getDateOut()+"'", null);
-		conn.commit();
+		
+	}
+	
+	public void updateLoanOverride( Loans loan) throws ClassNotFoundException, SQLException {
+		save("UPDATE tbl_book_loans SET dueDate = '"+ loan.getDueDate() +"' WHERE bookId = "+loan.getBookId()
+		+" AND branchId = "+loan.getBranchId()+" AND cardNo = "+loan.getCardNo()+" AND dateOut = '"+loan.getDateOut()+"'", null);
+		
 	}
 	
 

@@ -3,14 +3,17 @@
  */
 package com.ss.exercise.ui;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.List;
 
 import com.ss.exercise.entity.Author;
 import com.ss.exercise.entity.Book;
+import com.ss.exercise.entity.Borrower;
 import com.ss.exercise.entity.Branch;
 import com.ss.exercise.entity.Genre;
 import com.ss.exercise.entity.Loans;
@@ -35,7 +38,7 @@ public class AdminUi {
 		System.out.println("5) Branches");
 		System.out.println("6) Borrowers");
 		System.out.println("7) Loans");
-		
+		System.out.println("8) Return to previous");
 		Scanner sc = new Scanner(System.in); 
 		int userIn = 0;
 		try {
@@ -70,10 +73,16 @@ public class AdminUi {
 			break;
 		case 6:
 			System.out.println("Not rdy yet");
+			editBorrowers();
 			break;
 		case 7:
 			System.out.println("");
 			adminLoans();
+			break;
+		case 8:
+			System.out.println("");
+			LibraryUi lU = new LibraryUi();
+			lU.main(null);
 			break;
 		default:
 				System.out.println("Error with selection");
@@ -139,6 +148,7 @@ public class AdminUi {
 	public void adminLoans() {
 		System.out.println("What do you wish to do with loans?");
 		System.out.println("1) Read all");
+		System.out.println("2) Override a due date");
 		int userIn = scanner();
 		switch(userIn) {
 		case 1:
@@ -147,11 +157,13 @@ public class AdminUi {
 			break;
 		case 2:
 			System.out.println("");
+			overrideLoan();
 			break;
 		default:
 			System.out.println("Error with selection");
 		}
 	}
+	
 	
 	public void actionList(String name) {
 		System.out.println("What would you wish to do with "+ name +"?");
@@ -166,7 +178,28 @@ public class AdminUi {
 		AdministratorService adminService = new AdministratorService();
 		List<Book> books = adminService.getBooks(null);
 		for (Book b : books) {
+			List<Author> aList = b.getAuthors();
+		 	List<Genre> gList = b.getGenres();
+		 	List<String> aNames = new ArrayList<>();
+		 	List<String> aGenres = new ArrayList<>();
+		 	for(Author author : aList) {
+		 		aNames.add(author.getAuthorName());
+		 	}
+		 	String authorString = String.join(", ", aNames);
+		 	
+		 	for(Genre genre : gList) {
+		 		aGenres.add(genre.getGenreName());
+		 	}
+		 	String genreString = String.join(", ", aGenres);
+		 	Publisher publisher = b.getPublisher();
+		 	String pubName ="no publisher read";
+		 	if(publisher != null)
+		 		pubName=publisher.getPublisherName();
 			System.out.println("Book Title: " + b.getTitle());
+			System.out.println("    Author(s): "+authorString);
+			System.out.println("    Genere(s): "+genreString);
+			System.out.println("    Publisher: "+pubName);
+			
 		}
 		System.out.println("Enter in any char to return to adminMenu");
 		String s = scannerS();
@@ -247,9 +280,30 @@ public class AdminUi {
 //		}
 //		Book selectedBook = bList.get(userIn-1);
 	 	Book selectedBook = pickABook();
+	 	List<Author> aList = selectedBook.getAuthors();
+	 	List<Genre> gList = selectedBook.getGenres();
+	 	List<String> aNames = new ArrayList<>();
+	 	List<String> aGenres = new ArrayList<>();
+	 	for(Author author : aList) {
+	 		aNames.add(author.getAuthorName());
+	 	}
+	 	String authorString = String.join(", ", aNames);
+	 	
+	 	for(Genre genre : gList) {
+	 		aGenres.add(genre.getGenreName());
+	 	}
+	 	String genreString = String.join(", ", aGenres);
+	 	Publisher publisher = selectedBook.getPublisher();
+	 	String pubName ="no publisher read";
+	 	if(publisher != null)
+	 		pubName=publisher.getPublisherName();
+	 	
 		System.out.println("You have selected to update the book : "+ selectedBook.getTitle()+ ".");
 		System.out.println("What do you wish to update about "+selectedBook.getTitle()+"?");
-		System.out.println("T: "+selectedBook.getTitle()+" A: "+selectedBook.getAuthors() + " G: "+selectedBook.getGenres());
+		System.out.println("Title: "+selectedBook.getTitle());
+		System.out.println(" Authors: "+authorString);
+		System.out.println(" Genres: "+genreString);
+		System.out.println(" Publisher: "+pubName);
 		System.out.println("1) Title");
 		System.out.println("2) Author");
 		System.out.println("3) Genre");
@@ -305,7 +359,8 @@ public class AdminUi {
 	 AdministratorService adminService = new AdministratorService();
 	 List<Author> authors = authorSelector();
 	 selectedBook.setAuthors(authors);
-	 adminService.updateBookName(selectedBook);
+	 //adminService.updateBookName(selectedBook);
+	 adminService.updateBookAll(selectedBook);
 	 adminMenu();
  }
  
@@ -313,7 +368,8 @@ public class AdminUi {
 	 AdministratorService adminService = new AdministratorService();
 	 List<Genre> genres = genreSelector();
 	 selectedBook.setGenres(genres);
-	 adminService.updateBookName(selectedBook);
+	 //adminService.updateBookName(selectedBook);
+	 adminService.updateBookAll(selectedBook);
 	 adminMenu();
  }
  
@@ -321,7 +377,8 @@ public class AdminUi {
 	 AdministratorService adminService = new AdministratorService();
 	 Publisher publisher = publisherSelector();
 	 selectedBook.setPublisher(publisher);
-	 adminService.updateBookName(selectedBook);
+	// adminService.updateBookName(selectedBook);
+	 adminService.updateBookAll(selectedBook);
 	 adminMenu();
  }
  
@@ -641,6 +698,124 @@ public class AdminUi {
  }
  
  
+ public void editBorrowers() {
+	 actionList("Borrower");
+	 int userIn = scanner();
+	 switch(userIn) {
+	 case 1:
+		 System.out.println("");
+		 borrowerAdd();
+		 break;
+	 case 2:
+		 System.out.println("");
+		 borrowerUpdate();
+		 break;
+	 case 3:
+		 System.out.println("");
+		 borrowerDelete();
+		 break;
+	 case 4:
+		 System.out.println("");
+		 borrowerRead();
+		 break;
+	 case 5:
+		 System.out.println("");
+		 adminMenu();
+		 break;
+	 }
+ }
+ 
+ public void borrowerAdd() {
+	 AdministratorService adminService = new AdministratorService();
+	 System.out.println("Please enter the name");
+	 String name = scannerS();
+	 System.out.println("Please enter the Address");
+	 String address = scannerS();
+	 System.out.println("Please enter the Phone number");
+	 String phone = scannerS();
+	 Borrower borrower = new Borrower(null, name, address, phone);
+	 adminService.addBorrower(borrower);
+	 adminMenu();
+	 
+ }
+ 
+ public void borrowerUpdate() {
+	 AdministratorService adminService = new AdministratorService();
+	 Borrower borrower = pickBorrower();
+	 System.out.println("What do you wish to update about"+borrower.getCardNo()+", "+borrower.getName()+", "+borrower.getAddress()+", "+borrower.getPhone()+"?");
+	 System.out.println("1) Name");
+	 System.out.println("2) Address");
+	 System.out.println("3) Phone");
+	 System.out.println("4) Quit to Admin");
+	 int userIn = scanner();
+	 String s = "placeholder";
+	 switch(userIn) {
+	 case 1:
+		 System.out.println("Enter new Name (Formally "+borrower.getName()+")");
+		 s = scannerS();
+		 borrower.setName(s);
+		 break;
+	 case 2:
+		 System.out.println("Enter new Address (Formally "+borrower.getAddress()+")");
+		 s = scannerS();
+		 borrower.setAddress(s);
+		 break;
+	 case 3:
+		 System.out.println("Enter new Phone number (Formally "+borrower.getPhone()+")");
+		 s = scannerS();
+		 borrower.setPhone(s);
+		 break;
+	 case 4:
+		 adminMenu();
+		 System.exit(0);
+	 }
+	 
+	 adminService.updateBorrower(borrower);
+	 adminMenu();
+ }
+ 
+ public void borrowerDelete() {
+	 AdministratorService adminService = new AdministratorService();
+	 Borrower borrower = pickBorrower();
+	 adminService.deleteBorrower(borrower); 
+	 adminMenu();
+ }
+ 
+ 
+ public void borrowerRead() {
+	 AdministratorService adminService = new AdministratorService();
+	 List <Borrower> bList = adminService.readAllBorrowers();
+	 for(Borrower borrower : bList) {
+		 System.out.println(borrower.getCardNo()+", "+borrower.getName()+", "+borrower.getAddress()+", "+borrower.getPhone());
+	 }
+	 System.out.println("Enter any char to continue");
+	 String s = scannerS();
+	 adminMenu();
+ }
+ 
+ public Borrower pickBorrower() {
+	 System.out.println("Select a borrower");
+	 AdministratorService adminService = new AdministratorService();
+	 List <Borrower> bList = adminService.readAllBorrowers();
+	 int i =0;
+	 for(Borrower borrower : bList) {
+		 i++;
+		 System.out.println(i+") "+borrower.getCardNo()+", "+borrower.getName()+", "+borrower.getAddress()+", "+borrower.getPhone());
+	 }
+		System.out.println((i+1)+") Quit to previous");
+		   int userIn = scanner();
+				
+				if(userIn==i+1) {
+					System.out.println("");
+					adminMenu();
+					System.exit(0);
+				}
+				
+				Borrower tBorrower= bList.get(userIn-1);
+				return tBorrower;
+ }
+ 
+ 
  public void loansReadAll() {
 	 BorrowerService bS = new BorrowerService();
 		List<Loans> lList =bS.getAllLoans();
@@ -648,7 +823,52 @@ public class AdminUi {
 			System.out.println("Loan: bkI "+ aLoan.getBookId()+ " brnI "+aLoan.getBranchId()+" cN "+aLoan.getCardNo());
 			System.out.println("      Out "+ aLoan.getDateOut()+ " Due "+aLoan.getDueDate()+" In "+aLoan.getDateIn());
 		}
+		 System.out.println("Enter any char to continue");
+		 String s = scannerS();
+		 adminMenu();
  }
+ 
+ 
+ 
+ 
+ public void overrideLoan() {
+	 BorrowerService bS = new BorrowerService();
+		Loans loan = pickLoan();
+		 Calendar cal = Calendar.getInstance();
+		 cal.set(9999, 8, 9);
+		 Date overTime = new Date(cal.getTimeInMillis());
+		 System.out.println("Time is : "+overTime);
+		 loan.setDueDate(overTime);
+		 bS.updateLoanOverride(loan);
+		 adminMenu();
+		 
+	}
+ 
+ 
+ public Loans pickLoan() {
+	 System.out.println("Select a loan");
+	 BorrowerService bS = new BorrowerService();
+		List<Loans> lList =bS.getAllLoans();
+		int i = 0;
+		for(Loans aLoan : lList) {
+			i++;
+			System.out.println(i+") Loan: bookId: "+ aLoan.getBookId()+ " branchId: "+aLoan.getBranchId()+" cardNo: "+aLoan.getCardNo());
+			System.out.println("      Out: "+ aLoan.getDateOut()+ " Due: "+aLoan.getDueDate()+" In: "+aLoan.getDateIn());
+		}
+	 
+		System.out.println((i+1)+") Quit to previous");
+		   int userIn = scanner();
+				
+				if(userIn==i+1) {
+					System.out.println("");
+					adminMenu();
+					System.exit(0);
+				}
+				
+				Loans loan= lList.get(userIn-1);
+				return loan;
+ }
+	
  
  
 	public int scanner() {
@@ -840,7 +1060,13 @@ int userIn = scanner();
 			int i =0;
 			for(Book aBook :bList) {
 				i++;
-				System.out.println(i+") "+aBook.getTitle()+", "+ aBook.getAuthors()+", "+aBook.getBookId());
+				List<String> aNames = new ArrayList<>();
+				List <Author> aList = aBook.getAuthors();
+			 	for(Author author : aList) {
+			 		aNames.add(author.getAuthorName());
+			 	}
+			 	String authorString = String.join(", ", aNames);
+				System.out.println(i+") "+aBook.getTitle()+", Author(s): "+ authorString);
 			}
 			System.out.println((i+1)+") Quit to previous");
 
