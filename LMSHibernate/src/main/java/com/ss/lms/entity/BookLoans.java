@@ -1,9 +1,11 @@
 package com.ss.lms.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -11,21 +13,20 @@ import javax.persistence.Table;
 
 import org.springframework.lang.NonNull;
 
-//@Entity
+@Entity
 @Table(name = "tbl_book_loans")
-public class BookLoans {
+public class BookLoans implements Serializable {
 	
-	@ManyToOne
-	@JoinColumn(name = "bookId")
-	private List<Book> books;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8739877259058820879L;
+
+
 	
-	private int bookId;
-//	@ManyToOne
-//	@JoinColumn(name = "branchId")
-	private int branchId;
-//	@ManyToOne
-//	@JoinColumn(name = "cardNo")
-	private int cardNo;
+	
+	@EmbeddedId
+	private BookLoansId id;
 	
 	@Column(name = "dateOut")
 	@NonNull
@@ -35,18 +36,21 @@ public class BookLoans {
 	@Column(name = "dateIn")
 	private Date dateIn;
 	
-//	public Loans(int bookId, int branchId, int cardNo, Date dateOut, Date dueDate, Date dateIn) {
-//		this.dateOut = dateOut;
-//		this.dueDate = dueDate;
-//		this.dateIn = dateIn;
-//		this.bookId = bookId;
-//		this.branchId = branchId;
-//		this.cardNo = cardNo;
-//	}
 
+
+	
+	public BookLoansId getId() {
+		return id;
+	}
+	
+	public void setId(BookLoansId id) {
+		this.id = id;
+	}
+	
 	public Date getDateOut() {
 		return dateOut;
 	}
+
 
 	public void setDateOut(Date dateOut) {
 		this.dateOut = dateOut;
@@ -69,28 +73,6 @@ public class BookLoans {
 	}
 	
 
-	public int getBookId() {
-		return bookId;
-	}
 
-	public void setBookId(int bookId) {
-		this.bookId = bookId;
-	}
-
-	public int getBranchId() {
-		return branchId;
-	}
-
-	public void setBranchId(int branchId) {
-		this.branchId = branchId;
-	}
-
-	public int getCardNo() {
-		return cardNo;
-	}
-
-	public void setCardNo(int cardNo) {
-		this.cardNo = cardNo;
-	}
 
 }

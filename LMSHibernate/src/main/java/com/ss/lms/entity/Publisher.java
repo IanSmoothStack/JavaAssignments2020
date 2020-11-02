@@ -3,6 +3,7 @@
  */
 package com.ss.lms.entity;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,8 +28,13 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
  */
 @Entity
 @Table(name = "tbl_publisher")
-public class Publisher {
+public class Publisher implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3002670261046933665L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "publisherId")

@@ -101,19 +101,7 @@ public class BookCopies implements Serializable {
 	
 	
 	
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        book.getBookId() that = (book.getBookId()) o;
-//        return book.getBookId().equals(that.book.getBookId()) &&
-//                departmentId.equals(that.departmentId);
-//    }
 
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(book.getBookId(), branch.getBranchId());
-//    }
 	
 	
 }

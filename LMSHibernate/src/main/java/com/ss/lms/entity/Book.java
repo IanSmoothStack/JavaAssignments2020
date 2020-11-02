@@ -61,22 +61,6 @@ public class Book implements Serializable {
 	@JsonBackReference
 	private List<Branch> branches;
 	
-	
-	
-//	@EmbeddedId
-//	private List<BookCopies> bookCopies;
-	
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "book")
-//	@JsonBackReference
-//	private List<BookCopies> bookCopies;
-	
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "bookId")
-//	@JsonBackReference
-//	private List<BookLoans> bookLoans;
-	
-
-
-
 
 
 	public Integer getBookId() {

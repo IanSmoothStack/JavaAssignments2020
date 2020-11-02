@@ -26,7 +26,12 @@ import org.springframework.lang.NonNull;
 
 @Entity
 @Table(name = "tbl_borrower")
-public class Borrower {
+public class Borrower implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 696366561808106655L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

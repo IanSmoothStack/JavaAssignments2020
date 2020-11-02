@@ -28,6 +28,7 @@ import com.ss.lms.entity.Genre;
 import com.ss.lms.entity.BookLoans;
 import com.ss.lms.entity.Publisher;
 import com.ss.lms.repo.AuthorRepo;
+import com.ss.lms.repo.BookLoansRepo;
 import com.ss.lms.repo.BookRepo;
 import com.ss.lms.repo.BorrowerRepo;
 import com.ss.lms.repo.BranchRepo;
@@ -55,21 +56,16 @@ public class AdministratorService {
 	
 	@Autowired
 	BorrowerRepo borepo;
+	
+	@Autowired
+	public BookLoansRepo blrepo;
 
 	@Transactional
 	@RequestMapping(value = "/addBook", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public List<Book> addBook(@RequestBody Book book) throws SQLException {
 		
-//			if (book.getTitle() != null && book.getTitle().length() > 45) {
-//				return "Book Title cannot be empty and should be 45 char in length";
-//			}
+
 			
-			//book.setBookId(bdao.addBookWithPk(book));
-//			if(!book.getAuthors().isEmpty())
-//			for (Author a : book.getAuthors()) {
-//				adao.addBookAuthors(book.getBookId(), a.getAuthorId());
-//			
-//			}
 		List<Author> authors = new ArrayList<>();
 		if(!book.getAuthors().isEmpty())
 		for (Author a : book.getAuthors()) {
@@ -95,34 +91,12 @@ public class AdministratorService {
 		book.setGenres(genres);
 		
 		
-		
-//		if(book.getPublisher()!= null) {
-//			
-//		}
-			
-			///if(book.getPublisher()!= null)
-				////do i even need to add publisher?
-			
-			//return getBooks(null);
+
 			brepo.save(book);
 			return getAllBooks();
 		
 	}
-//
-//	@RequestMapping(value = "/getBooks/{searchString}", method = RequestMethod.GET, produces = "application/json")
-//	public List<Book> getBooks(@PathVariable String searchString) {
-//		try {
-//			if (searchString != null) {
-//				return bdao.readAllBooksByName(searchString);
-//			} else {
-//				return bdao.readAllBooks();
-//			}
-//		} catch (ClassNotFoundException | SQLException e) {
-//			e.printStackTrace();
-//			return null;
-//		}
-//	}
-//
+
 	@RequestMapping(value = "/getBooksByQuery", method = RequestMethod.GET, produces = "application/json")
 	public List<Book> getBooksByQuery(@RequestParam String searchString) {
 		List<Book> books = new ArrayList<>();
@@ -190,8 +164,6 @@ public class AdministratorService {
 	public List<Genre> addGenre(@RequestBody Genre genre) throws SQLException { 
 		
 				grepo.save(genre);
-				// genre.setGenreId(grepo.save(entity));
-				 //conn.commit();
 				 System.out.println("Addition successful");
 				 return(getAllGenres());
 		
@@ -206,6 +178,9 @@ public class AdministratorService {
 				 return(getAllBorrowers());
 		
 	}
+	
+	
+	
 
 	
 	@Transactional
@@ -313,8 +288,6 @@ public class AdministratorService {
 				if(genre.getGenreId()== null)
 					return getAllGenres();
 				
-//				Genre g = getGenreById(genre.getGenreId());
-//				grepo.delete(g);
 				grepo.deleteGenre(genre.getGenreId());
 				 return(getAllGenres());
 		
@@ -456,6 +429,58 @@ public class AdministratorService {
 	}
 	
 	
+	@Transactional
+	@RequestMapping(value = "/updateBorrowerById", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Borrower> updateBorrowerById(@RequestBody Borrower borrower) throws SQLException { 
+		
+				if(borrower.getCardNo()== null)
+					return getAllBorrowers();
+				
+				
+				Borrower oldB = getBorrowerById(borrower.getCardNo());
+				if(borrower.getName()!= null) {
+					oldB.setName(borrower.getName());
+				}
+				if(borrower.getAddress()!= null) {
+					oldB.setAddress(borrower.getAddress());
+				}
+				if(borrower.getPhone()!= null) {
+					oldB.setPhone(borrower.getPhone());
+				}
+				borepo.save(oldB);
+				 return(getAllBorrowers());
+		
+	}
+	
+	
+	///meant for overriding due date but can be used to change any of the loan's values
+	@RequestMapping(value = "/overrideBookLoan", method = RequestMethod.GET, produces = "application/json")
+	public List<BookLoans> overrideBookLoan(@RequestBody BookLoans bookLoans) throws SQLException { 
+		
+		LibrarianService ls = new LibrarianService();
+		if(bookLoans.getId().getBookId() == null|bookLoans.getId().getBranchId() == null |bookLoans.getId().getCardNo() == null)
+			return null;
+		int bookId = bookLoans.getId().getBookId();
+		int branchId = bookLoans.getId().getBranchId();
+		int cardNo = bookLoans.getId().getCardNo();
+		BookLoans oldLoan = ls.getBookLoansById(bookId, branchId, cardNo);
+		
+		if(bookLoans.getDateIn()!=null) {
+			oldLoan.setDateIn(bookLoans.getDateIn());
+		}
+		if(bookLoans.getDateOut()!=null) {
+			oldLoan.setDateOut(bookLoans.getDateOut());
+		}
+
+		if(bookLoans.getDueDate()!=null) {
+			oldLoan.setDueDate(bookLoans.getDueDate());
+		}
+		
+		blrepo.save(bookLoans);
+		
+		return ls.getAllBookLoans();
+	}
+	
 	
 	
 	
@@ -516,9 +541,7 @@ public class AdministratorService {
 	
 	
 	
-	
-	
-	/////make updateBookGeneres, updateBookName etc?
+
 
 
 

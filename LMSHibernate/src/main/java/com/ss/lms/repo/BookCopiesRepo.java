@@ -25,9 +25,9 @@ public interface BookCopiesRepo  extends JpaRepository<BookCopies, Integer> {
 	@Query(" FROM BookCopies where branchId =:branchId")
 	public List<BookCopies> readBookCopiesByBranchId(@Param("branchId") int branchId);
 	
+	@Query(" FROM BookCopies where branchId =:branchId and bookId =:bookId")
+	public List<BookCopies> readBookCopiesById( @Param("bookId") int bookId, @Param("branchId") int branchId);
 	
-//	@Modifying
-//	@Query("delete BookCopies where branchId =:branchId, bookId =:bookId")
-//	int deleteBookCopies(@Param("branchId") int branchId, @Param("bookId") int bookId);
+
 
 }

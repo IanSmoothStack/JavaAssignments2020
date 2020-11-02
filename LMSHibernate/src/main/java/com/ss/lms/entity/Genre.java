@@ -4,6 +4,7 @@
 package com.ss.lms.entity;
 
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -24,8 +25,13 @@ import org.springframework.lang.NonNull;
  */
 @Entity
 @Table(name = "tbl_genre")
-public class Genre {
+public class Genre implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7923887367449256296L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "genre_id")
