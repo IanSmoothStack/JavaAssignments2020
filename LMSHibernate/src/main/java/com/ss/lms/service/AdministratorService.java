@@ -1,10 +1,15 @@
 package com.ss.lms.service;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+//import org.hibernate.mapping.Set;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,11 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ss.lms.entity.Author;
 import com.ss.lms.entity.Book;
+import com.ss.lms.entity.Borrower;
+import com.ss.lms.entity.Branch;
 import com.ss.lms.entity.Genre;
-import com.ss.lms.entity.Loans;
+import com.ss.lms.entity.BookLoans;
 import com.ss.lms.entity.Publisher;
 import com.ss.lms.repo.AuthorRepo;
 import com.ss.lms.repo.BookRepo;
+import com.ss.lms.repo.BorrowerRepo;
+import com.ss.lms.repo.BranchRepo;
 import com.ss.lms.repo.GenreRepo;
 import com.ss.lms.repo.PublisherRepo;
 
@@ -40,6 +49,12 @@ public class AdministratorService {
 
 	@Autowired
 	PublisherRepo prepo;
+	
+	@Autowired
+	BranchRepo brrepo;
+	
+	@Autowired
+	BorrowerRepo borepo;
 
 	@Transactional
 	@RequestMapping(value = "/addBook", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
@@ -149,6 +164,27 @@ public class AdministratorService {
 	}
 	
 	
+	@RequestMapping(value = "/getBorrowersByQuery", method = RequestMethod.GET, produces = "application/json")
+	public List<Borrower> getBorrowersByQuery(@RequestParam String searchString) {
+		List<Borrower> borrowers = new ArrayList<>();
+		if (searchString != null && searchString.length() > 0) {
+				borrowers = borepo.readBorrowersByName(searchString);
+		} else {
+				borrowers = borepo.findAll();
+		}
+		return borrowers;
+	}
+	
+	
+	@RequestMapping(value = "/getAllBorrowers", method = RequestMethod.GET, produces = "application/json")
+	public List<Borrower> getAllBorrowers() {
+		List<Borrower> borrowers = new ArrayList<>();
+		borrowers = borepo.findAll();
+		return borrowers;
+	}
+	
+	
+	
 	@Transactional
 	@RequestMapping(value = "/addGenre", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public List<Genre> addGenre(@RequestBody Genre genre) throws SQLException { 
@@ -162,28 +198,68 @@ public class AdministratorService {
 	}
 	
 	@Transactional
-	@RequestMapping(value = "/deleteGenre", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public List<Genre> deleteGenre(@RequestBody Genre genre) throws SQLException { 
+	@RequestMapping(value = "/addBorrower", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Borrower> addBorrower(@RequestBody Borrower borrower) throws SQLException { 
 		
-				grepo.delete(genre);
-				// genre.setGenreId(grepo.save(entity));
-				 //conn.commit();
-				 //System.out.println("removal successful");
-				 return(getAllGenres());
+				borepo.save(borrower);
+		
+				 return(getAllBorrowers());
 		
 	}
+
 	
 	@Transactional
 	@RequestMapping(value = "/deleteBook", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public List<Book> deleteBook(@RequestBody Book book) throws SQLException { 
 		
 				brepo.delete(book);
-				// book.setBookId(grepo.save(entity));
-				 //conn.commit();
-				 //System.out.println("removal successful");
 				 return(getAllBooks());
 		
 	}
+	
+	@Transactional
+	@RequestMapping(value = "/updateBook", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Book> updateBook(@RequestBody Book book) throws SQLException { 
+		
+				if(book.getBookId()== null)
+					return(getAllBooks());
+				
+				Book oldBook = getBookById(book.getBookId());
+				
+				if(book.getAuthors()!= null) {
+					List<Author> authors = new ArrayList<>();
+					for (Author a : book.getAuthors()) {
+						authors.add(getAuthorById(a.getAuthorId()));
+					}
+					oldBook.setAuthors(authors);
+				}
+				
+				if(book.getGenres() != null) {
+					List<Genre> genres = new ArrayList<>();
+					for (Genre g : book.getGenres()) {
+						genres.add(getGenreById(g.getGenreId()));
+					}
+					oldBook.setGenres(book.getGenres());
+				}
+				
+				if(book.getPublisher()!=null)
+					oldBook.setPublisher(getPublisherById(book.getPubId()));
+				
+				if(book.getTitle()!=null)
+					oldBook.setTitle(book.getTitle());
+				
+				brepo.save(oldBook);
+
+		
+				 return(getAllBooks());
+		
+	}
+	
+	
+	
+	
+
+	
 	
 	@Transactional
 	@RequestMapping(value = "/deleteBookById", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
@@ -194,12 +270,199 @@ public class AdministratorService {
 				
 				Book b = getBookById(book.getBookId());
 				brepo.delete(b);
-				// book.setBookId(grepo.save(entity));
-				 //conn.commit();
-				 //System.out.println("removal successful");
 				 return(getAllBooks());
 		
 	}
+	
+	@Transactional
+	@RequestMapping(value = "/deleteAuthor", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Author> deleteAuthor(@RequestBody Author author) throws SQLException { 
+		
+				arepo.delete(author);
+				 return(getAllAuthors());
+		
+	}
+	
+	@Transactional
+	@RequestMapping(value = "/deleteAuthorById", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Author> deleteAuthorById(@RequestBody Author author) throws SQLException { 
+		
+				if(author.getAuthorId()== null)
+					return getAllAuthors();
+				
+				Author a = getAuthorById(author.getAuthorId());
+				arepo.delete(a);
+				 return(getAllAuthors());
+		
+	}
+	
+	
+	@Transactional
+	@RequestMapping(value = "/deleteGenre", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Genre> deleteGenre(@RequestBody Genre genre) throws SQLException { 
+		
+				grepo.delete(genre);
+				 return(getAllGenres());
+		
+	}
+	
+	@Transactional
+	@RequestMapping(value = "/deleteGenreById", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Genre> deleteGenreById(@RequestBody Genre genre) throws SQLException { 
+		
+				if(genre.getGenreId()== null)
+					return getAllGenres();
+				
+//				Genre g = getGenreById(genre.getGenreId());
+//				grepo.delete(g);
+				grepo.deleteGenre(genre.getGenreId());
+				 return(getAllGenres());
+		
+	}
+	
+	@Transactional
+	@RequestMapping(value = "/updateGenreById", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Genre> updateGenreById(@RequestBody Genre genre) throws SQLException { 
+		
+				if(genre.getGenreId()== null)
+					return getAllGenres();
+				
+				grepo.updateGenre(genre.getGenreId(), genre.getGenreName());
+				 return(getAllGenres());
+		
+	}
+	
+	@Transactional
+	@RequestMapping(value = "/updateGenre", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Genre> updateGenre(@RequestBody Genre genre) throws SQLException { 
+		
+				if(genre.getGenreId()== null)
+					return getAllGenres();
+				if(genre.getGenreName()!= null) {
+					grepo.save(genre);
+				}
+				
+				 return(getAllGenres());
+		
+	}
+	
+	
+	@Transactional
+	@RequestMapping(value = "/updateAuthor", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Author> updateAuthor(@RequestBody Author author) throws SQLException { 
+		
+		if(author.getAuthorId() == null)
+			return(getAllAuthors());
+		
+		
+		Author oldAuthor = getAuthorById(author.getAuthorId());
+		
+		if(author.getAuthorName()!= null) {
+			oldAuthor.setAuthorName(author.getAuthorName());
+		}
+		
+		if(author.getBooks()!= null) {
+			List<Book> books = new ArrayList<>();
+			for (Book a : author.getBooks()) {
+				books.add(getBookById(a.getBookId()));
+			}
+			oldAuthor.setBooks(books);
+		}
+		
+				arepo.save(oldAuthor);
+				 return(getAllAuthors());
+		
+	}
+	
+	
+	@Transactional
+	@RequestMapping(value = "/updatePublisher", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Publisher> updatePublisher(@RequestBody Publisher publisher) throws SQLException { 
+		
+		if(publisher.getPublisherId() == null)
+			return(getAllPublishers());
+		
+		
+		Publisher oldPublisher = getPublisherById(publisher.getPublisherId());
+		
+		if(publisher.getPublisherName()!= null) {
+			oldPublisher.setPublisherName(publisher.getPublisherName());
+		}
+		
+		if(publisher.getBooks()!= null) {
+			List<Book> books = new ArrayList<>();
+			for (Book a : publisher.getBooks()) {
+				books.add(getBookById(a.getBookId()));
+			}
+			oldPublisher.setBooks(books);
+		}
+		
+		if(publisher.getPublisherAddress()!= null) {
+			oldPublisher.setPublisherAddress(publisher.getPublisherAddress());
+		}
+		
+				prepo.save(oldPublisher);
+				 return(getAllPublishers());
+		
+	}
+	
+	
+	@Transactional
+	@RequestMapping(value = "/deletePublisher", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Publisher> deletePublisher(@RequestBody Publisher publisher) throws SQLException { 
+		
+				prepo.delete(publisher);
+				 return(getAllPublishers());
+		
+	}
+	
+	
+	@Transactional
+	@RequestMapping(value = "/deletePublisherById", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Publisher> deletePublisherById(@RequestBody Publisher publisher) throws SQLException { 
+		
+				if(publisher.getPublisherId()== null)
+					return getAllPublishers();
+				
+				Publisher p = getPublisherById(publisher.getPublisherId());
+				prepo.delete(p);
+				 return(getAllPublishers());
+		
+	}
+	
+	
+	
+	@Transactional
+	@RequestMapping(value = "/deleteBorrower", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Borrower> deleteBorrower(@RequestBody Borrower borrower) throws SQLException { 
+		
+				borepo.delete(borrower);
+				 return(getAllBorrowers());
+		
+	}
+	
+	
+	@Transactional
+	@RequestMapping(value = "/deleteBorrowerById", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Borrower> deleteBorrowerById(@RequestBody Borrower borrower) throws SQLException { 
+		
+				if(borrower.getCardNo()== null)
+					return getAllBorrowers();
+				
+				Borrower p = getBorrowerById(borrower.getCardNo());
+				borepo.delete(p);
+				 return(getAllBorrowers());
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public Book getBookById(int bookId) throws SQLException{
 		List<Book> books = brepo.readBooksById(bookId);
@@ -235,58 +498,28 @@ public class AdministratorService {
 	}
 	
 	
+	public Branch getBranchById(int branchId) throws SQLException{
+		List<Branch> branchs = brrepo.readBranchesById(branchId);
+		if(!branchs.isEmpty())
+			return branchs.get(0);
+		return null;
+		
+	}
+	
+	public Borrower getBorrowerById(int cardNo) throws SQLException{
+		List<Borrower> borrowers = borepo.readBorrowersByCardNo(cardNo);
+		if(!borrowers.isEmpty())
+			return borrowers.get(0);
+		return null;
+		
+	}
 	
 	
-//	
-//	
-//	@RequestMapping(value = "/getAllAuthors", method = RequestMethod.GET, produces = "application/json")
-//	public List<Author> getAllAuthors() {
-//		try {
-//		
-//				return adao.readAllAuthors();
-//			
-//		} catch (ClassNotFoundException | SQLException e) {
-//			e.printStackTrace();
-//			return null;
-//		}
-//	}
-//	
-//	@RequestMapping(value = "/getAllGenres", method = RequestMethod.GET, produces = "application/json")
-//	public List<Genre> getAllGenres() {
-//		try {
-//		
-//				return gdao.readAllGenres();
-//			
-//		} catch (ClassNotFoundException | SQLException e) {
-//			e.printStackTrace();
-//			return null;
-//		}
-//	}
-//	
-//	@RequestMapping(value = "/getAllLoans", method = RequestMethod.GET, produces = "application/json")
-//	public List<Loans> getAllLoans() {
-//		try {
-//		
-//				return ldao.readAllLoans();
-//			
-//		} catch (ClassNotFoundException | SQLException e) {
-//			e.printStackTrace();
-//			return null;
-//		}
-//	}
-//	
-//	@RequestMapping(value = "/getAllPublishers", method = RequestMethod.GET, produces = "application/json")
-//	public List<Publisher> getAllPublishers() {
-//		try {
-//		
-//				return pdao.readAllPublishers();
-//			
-//		} catch (ClassNotFoundException | SQLException e) {
-//			e.printStackTrace();
-//			return null;
-//		}
-//	}
-//	
+	
+	
+	
+	/////make updateBookGeneres, updateBookName etc?
+
 
 
 }

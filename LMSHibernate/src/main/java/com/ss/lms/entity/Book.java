@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,10 +23,9 @@ import javax.persistence.Table;
 
 import org.springframework.lang.NonNull;
 
-/**
- * @author ppradhan
- *
- */
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+
 @Entity
 @Table(name = "tbl_book")
 public class Book implements Serializable {
@@ -54,6 +55,24 @@ public class Book implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "pubId")
 	private Publisher publisher;
+	
+	
+	@ManyToMany(fetch = FetchType.LAZY,mappedBy = "books")
+	@JsonBackReference
+	private List<Branch> branches;
+	
+	
+	
+//	@EmbeddedId
+//	private List<BookCopies> bookCopies;
+	
+//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "book")
+//	@JsonBackReference
+//	private List<BookCopies> bookCopies;
+	
+//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "bookId")
+//	@JsonBackReference
+//	private List<BookLoans> bookLoans;
 	
 
 

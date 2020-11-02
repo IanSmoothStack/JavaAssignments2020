@@ -1,6 +1,7 @@
 package com.ss.lms.service;
 
 
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,26 +14,289 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+
+import com.ss.lms.entity.BookCopies;
+import com.ss.lms.entity.Publisher;
+import com.ss.lms.repo.BookCopiesRepo;
+import com.ss.lms.repo.BookRepo;
+import com.ss.lms.repo.BranchRepo;
+import com.ss.lms.entity.Book;
 import com.ss.lms.entity.Branch;
 
 @RestController
 public class LibrarianService {
 	
-//	@Autowired
-//	public BranchDAO bdao;	
+	@Autowired
+	public BranchRepo brrepo;	
+	
+	@Autowired
+	public BookRepo brepo;	
+	
+	@Autowired
+	public BookCopiesRepo bcrepo;	
 	
 //	@Transactional
+
+	
+	@RequestMapping(value = "/getBranchesByQuery", method = RequestMethod.GET, produces = "application/json")
+	public List<Branch> getBranchesByQuery(@RequestParam String searchString) {
+		List<Branch> branches = new ArrayList<>();
+		if (searchString != null && searchString.length() > 0) {
+				branches = brrepo.readBranchesByName(searchString);
+		} else {
+				branches = brrepo.findAll();
+		}
+		return branches;
+	}
+	
+	///make sure to hide branchId in borrower version
 	@RequestMapping(value = "/getAllBranches", method = RequestMethod.GET, produces = "application/json")
 	public List<Branch> getAllBranches() {
-//		try {
-//		
+		List<Branch> branchs = new ArrayList<>();
+		branchs = brrepo.findAll();
+		return branchs;
+	}
+	
+	
+	@RequestMapping(value = "/getAllBookCopies", method = RequestMethod.GET, produces = "application/json")
+	public List<BookCopies> getAllBookCopies() {
+		List<BookCopies> bookCopies = new ArrayList<>();
+		bookCopies = bcrepo.findAll();
+		//bookCopies = bcrepo.readBookCopiesByBookId(1);
+		return bookCopies;
+//		return null;
+	}
+	
+	@RequestMapping(value = "/getBranchBooks", method = RequestMethod.GET, produces = "application/json")
+	public List<Book> getBranchBooks(@RequestBody Branch sBranch) throws SQLException { 
+		List<Book> books = new ArrayList<>();
+		if(sBranch.getBranchId()==null)
+			return null;
+		int branchId = sBranch.getBranchId();
+		List<BookCopies> bc = new ArrayList<>();
+		bc = bcrepo.readBookCopiesByBranchId(branchId);
+		
+		for (BookCopies a : bc) {
+			books.add(getBookById(a.getId().getBookId()));
+		}		
+		return books;
+	}
+	
+	
+	@RequestMapping(value = "/getBookCopiesByBranchId", method = RequestMethod.GET, produces = "application/json")
+	public List<BookCopies> getBookCopiesByBranchId(@RequestBody Branch sBranch) throws SQLException { 
+		List<Book> books = new ArrayList<>();
+		if(sBranch.getBranchId()==null)
+			return null;
+		int branchId = sBranch.getBranchId();
+		List<BookCopies> bc = new ArrayList<>();
+		bc = bcrepo.readBookCopiesByBranchId(branchId);	
+		return bc;
+	}
+	
+	
+	@RequestMapping(value = "/addBookCopies", method = RequestMethod.POST, produces = "application/json")
+	public List<BookCopies> addBookCopies(@RequestBody BookCopies bookCopies ) throws SQLException { 
+	
+	//	if(bookCopies.getBranchId() == null)
+	//		return null;
+		int branchId = bookCopies.getId().getBranchId();
+		bcrepo.save(bookCopies);
+		List<BookCopies> bc = new ArrayList<>();
+		bc = bcrepo.readBookCopiesByBranchId(branchId);	
+		return bc;
+	}
+	
+	
+	@RequestMapping(value = "/updateBookCopies", method = RequestMethod.POST, produces = "application/json")
+	public List<BookCopies> updateBookCopies(@RequestBody BookCopies bookCopies ) throws SQLException { 
+	
+		int branchId = bookCopies.getId().getBranchId();
+		bcrepo.save(bookCopies);
+		List<BookCopies> bc = new ArrayList<>();
+		bc = bcrepo.readBookCopiesByBranchId(branchId);	
+		return bc;
+	}
+	
+	public Branch getBranchById(int branchId) throws SQLException{
+		List<Branch> branchs = brrepo.readBranchesById(branchId);
+		if(!branchs.isEmpty())
+			return branchs.get(0);
+		return null;
+		
+	}
+	
+	
+
+	
+	
+	
+	@Transactional
+	@RequestMapping(value = "/updateBranch", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Branch> updateBranch(@RequestBody Branch branch) throws SQLException { 
+		
+		if(branch.getBranchId() == null)
+			return(getAllBranches());
+		
+		
+		Branch oldBranch = getBranchById(branch.getBranchId());
+		
+		if(branch.getBranchName()!= null) {
+			oldBranch.setBranchName(branch.getBranchName());
+		}
+		
+		if(branch.getBranchAddress()!= null) {
+			oldBranch.setBranchAddress(branch.getBranchAddress());
+		}
+		
+		if(branch.getBooks()!= null) {
+			List<Book> books = new ArrayList<>();
+			for (Book a : branch.getBooks()) {
+				books.add(getBookById(a.getBookId()));
+			}
+			oldBranch.setBooks(books);
+		}
+		
+				brrepo.save(oldBranch);
+				 return(getAllBranches());
+		
+	}
+	
+	
+	@Transactional
+	@RequestMapping(value = "/deleteBranch", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Branch> deleteBranch(@RequestBody Branch branch) throws SQLException { 
+		
+				brrepo.delete(branch);
+				 return(getAllBranches());
+		
+	}
+	
+	
+	@Transactional
+	@RequestMapping(value = "/deleteBranchById", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public List<Branch> deleteBranchById(@RequestBody Branch branch) throws SQLException { 
+		
+				if(branch.getBranchId()== null)
+					return getAllBranches();
+				
+				Branch p = getBranchById(branch.getBranchId());
+				brrepo.delete(p);
+				 return(getAllBranches());
+		
+	}
+	
+	
+	
+	public Book getBookById(int bookId) throws SQLException{
+		List<Book> books = brepo.readBooksById(bookId);
+		if(!books.isEmpty())
+			return books.get(0);
+		return null;
+		
+	}
+	
+	
+//	public void updateBranchName(Branch userBranch) {
+//		try(Connection conn = conUtil.getConnection()) {
+//			BranchDAO bdao = new BranchDAO(conn);
+//				 bdao.updateBranchName(userBranch);
+//				 System.out.println(" success");
+//		} catch (ClassNotFoundException | SQLException e) {
+//			e.printStackTrace();
+//			
+//		}
+//	}
+//	
+//	public void updateBranchAddress(Branch userBranch) {
+//		try(Connection conn = conUtil.getConnection()) {
+//			BranchDAO bdao = new BranchDAO(conn);
+//				 bdao.updateBranchAddress(userBranch);
+//		} catch (ClassNotFoundException | SQLException e) {
+//			e.printStackTrace();
+//			
+//		}
+//	}
+//	
+//	
+//	public List<Branch> getBranches(String searchString) {
+//		try(Connection conn = conUtil.getConnection()) {
+//			BranchDAO bdao = new BranchDAO(conn);
+//			if (searchString != null) {
+//				return bdao.readAllBranchesByName(searchString);
+//			} else {
 //				return bdao.readAllBranches();
+//			}
+//		} catch (ClassNotFoundException | SQLException e) {
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
+//	
+//	public List<NumberOfCopies> getNumberOfCopies(int bookId, int branchId){
+//		try(Connection conn = conUtil.getConnection()) {
+//			NumberOfCopiesDAO ndao = new NumberOfCopiesDAO(conn);
+//			
+//				return ndao.getNumOfBookCopies(bookId, branchId);
 //			
 //		} catch (ClassNotFoundException | SQLException e) {
 //			e.printStackTrace();
 //			return null;
 //		}
-		return null;
-	}
+//		
+//	}
+//	
+//	public void updateNumOfCopies(int bookId, int branchId, int newNumOfCopies) {
+//		try(Connection conn = conUtil.getConnection()) {
+//			NumberOfCopiesDAO ndao = new NumberOfCopiesDAO(conn);
+//			
+//				 ndao.updateNumOfCopies(bookId, branchId, newNumOfCopies);
+//				 System.out.println(" success");
+//		} catch (ClassNotFoundException | SQLException e) {
+//			e.printStackTrace();
+//			
+//		}
+//	}
+//		
+//		public void addCopies(int bookId, int branchId, int newNumOfCopies) {
+//			try(Connection conn = conUtil.getConnection()) {
+//				NumberOfCopiesDAO ndao = new NumberOfCopiesDAO(conn);
+//				
+//					 ndao.addCopies( bookId, branchId, newNumOfCopies);
+//					 System.out.println(" success");
+//			} catch (ClassNotFoundException | SQLException e) {
+//				e.printStackTrace();
+//				
+//			}
+//	}
+//		
+//		
+//		
+//		public void deleteBranch(Branch branch) {
+//			try(Connection conn = conUtil.getConnection()) {
+//				BranchDAO adao = new BranchDAO(conn);
+//				NumberOfCopiesDAO ndao = new NumberOfCopiesDAO(conn);
+//					 ndao.deletedBranch(branch.getBranchId());
+//					 adao.deleteBranch(branch);
+//					 conn.commit();
+//					 System.out.println(" success");
+//			} catch (ClassNotFoundException | SQLException e) {
+//				e.printStackTrace();
+//				
+//			}
+//		}
+//		public void addBranch(Branch branch) {
+//			try(Connection conn = conUtil.getConnection()) {
+//				BranchDAO adao = new BranchDAO(conn);
+//					// adao.addBranch(branch);
+//					 branch.setBranchId(adao.addBranchWithPk(branch));
+//					 conn.commit();
+//					 System.out.println(" success");
+//			} catch (ClassNotFoundException | SQLException e) {
+//				e.printStackTrace();
+//				
+//			}
+//		}
+		
 
 }
