@@ -290,63 +290,6 @@ public class BorrowerService {
 	
 	
 	
-	@Transactional
-	@RequestMapping(value = "/updateBranch", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public List<Branch> updateBranch(@RequestBody Branch branch) throws SQLException { 
-		
-		if(branch.getBranchId() == null)
-			return(getAllBranches());
-		
-		
-		Branch oldBranch = getBranchById(branch.getBranchId());
-		
-		if(branch.getBranchName()!= null) {
-			oldBranch.setBranchName(branch.getBranchName());
-		}
-		
-		if(branch.getBranchAddress()!= null) {
-			oldBranch.setBranchAddress(branch.getBranchAddress());
-		}
-		
-		if(branch.getBooks()!= null) {
-			List<Book> books = new ArrayList<>();
-			for (Book a : branch.getBooks()) {
-				books.add(getBookById(a.getBookId()));
-			}
-			oldBranch.setBooks(books);
-		}
-		
-				brrepo.save(oldBranch);
-				 return(getAllBranches());
-		
-	}
-	
-	
-	@Transactional
-	@RequestMapping(value = "/deleteBranch", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public List<Branch> deleteBranch(@RequestBody Branch branch) throws SQLException { 
-		
-				brrepo.delete(branch);
-				 return(getAllBranches());
-		
-	}
-	
-	
-	@Transactional
-	@RequestMapping(value = "/deleteBranchById", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public List<Branch> deleteBranchById(@RequestBody Branch branch) throws SQLException { 
-		
-				if(branch.getBranchId()== null)
-					return getAllBranches();
-				
-				Branch p = getBranchById(branch.getBranchId());
-				brrepo.delete(p);
-				 return(getAllBranches());
-		
-	}
-	
-	
-	
 	public Book getBookById(int bookId) throws SQLException{
 		List<Book> books = brepo.readBooksById(bookId);
 		if(!books.isEmpty())
